@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collector.Characteristics.IDENTITY_FINISH;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
 @Service
 public class MicroDvdDialogParser implements DialogParser {
