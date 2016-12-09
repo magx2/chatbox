@@ -1,6 +1,8 @@
 package pl.grzeslowski.chatbox.files;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.grzeslowski.chatbox.preprocessor.TextPreprocessor;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -21,9 +23,14 @@ public class FileReader {
             .map(Charset::forName)
             .collect(toList());
 
+    @Autowired
+    private TextPreprocessor textPreprocessor;
+
     public Stream<String> readFile(Path path, Charset charset) {
         try (Stream<String> stream = Files.lines(path, charset)) {
-            return stream.collect(toList()).stream();
+            return stream.collect(toList())
+                    .stream()
+                    .map(textPreprocessor::preprocess);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
