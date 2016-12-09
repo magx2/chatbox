@@ -80,13 +80,13 @@ public class MicroDvdDialogParserTest {
         );
 
         //when
-        final Set<Dialog> dialogs = parser.parse(lines).collect(Collectors.toSet());
+        final List<Dialog> dialogs = parser.parse(lines).collect(Collectors.toList());
 
         // then
         assertThat(dialogs).hasSize(2);
 
         {
-            final Dialog dialog = dialogs.iterator().next();
+            final Dialog dialog = dialogs.get(0);
             final List<String> d = dialog.getDialog();
             assertThat(d).hasSize(2);
 
@@ -95,7 +95,7 @@ public class MicroDvdDialogParserTest {
         }
 
         {
-            final Dialog dialog = dialogs.iterator().next();
+            final Dialog dialog = dialogs.get(1);
             final List<String> d = dialog.getDialog();
             assertThat(d).hasSize(2);
 
