@@ -42,6 +42,8 @@ class BasicTextPreprocessor implements TextPreprocessor {
                 .map(l -> remove(l, "="))
                 .map(l -> remove(l, ":"))
                 .map(l -> remove(l, ";"))
+                .map(l -> remove(l, "/"))
+                .map(l -> remove(l, "\\\\"))
                 .get();
     }
 }
