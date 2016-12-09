@@ -104,18 +104,18 @@ class RnnEngineImpl implements RnnEngine {
             net.fit(train);
 
             train.reset();
-            System.out.println("Epoch " + i + " complete. Starting evaluation:");
+            log.info("Epoch " + i + " complete. Starting evaluation:");
 
             Evaluation evaluation = new Evaluation();
-            while(test.hasNext()){
+            while (test.hasNext()) {
                 DataSet t = test.next();
                 INDArray features = t.getFeatureMatrix();
                 INDArray labels = t.getLabels();
                 INDArray inMask = t.getFeaturesMaskArray();
                 INDArray outMask = t.getLabelsMaskArray();
-                INDArray predicted = net.output(features,false,inMask,outMask);
+                INDArray predicted = net.output(features, false, inMask, outMask);
 
-                evaluation.evalTimeSeries(labels,predicted,outMask);
+                evaluation.evalTimeSeries(labels, predicted, outMask);
             }
             test.reset();
 
