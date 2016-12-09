@@ -18,7 +18,7 @@ import static java.lang.String.format;
 
 class DialogsDataSetIterator implements DataSetIterator {
     private final List<RnnEngineImpl.VecDialog> dialogs;
-    private final Iterator<RnnEngineImpl.VecDialog> iterator;
+    private Iterator<RnnEngineImpl.VecDialog> iterator;
     private int cursor;
 
     private final int batchSize;
@@ -104,7 +104,7 @@ class DialogsDataSetIterator implements DataSetIterator {
 
     @Override
     public boolean resetSupported() {
-        return false;
+        return true;
     }
 
     @Override
@@ -114,7 +114,8 @@ class DialogsDataSetIterator implements DataSetIterator {
 
     @Override
     public void reset() {
-        throw new UnsupportedOperationException("Reset not suported");
+        iterator = dialogs.iterator();
+        cursor = 0;
     }
 
     @Override

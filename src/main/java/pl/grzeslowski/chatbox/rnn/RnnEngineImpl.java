@@ -1,5 +1,7 @@
 package pl.grzeslowski.chatbox.rnn;
 
+import org.datavec.api.split.CollectionInputSplit;
+import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.models.word2vec.Word2Vec;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.GradientNormalization;
@@ -12,6 +14,7 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.dataset.api.DataSet;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.slf4j.Logger;
@@ -20,7 +23,9 @@ import org.springframework.stereotype.Service;
 import pl.grzeslowski.chatbox.dialogs.Dialog;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,6 +54,8 @@ class RnnEngineImpl implements RnnEngine {
     private double gradientNormalizationThreshold;
     @Value("${word2vec.hyper.layerSize}")
     private int layerSize;
+    @Value("${seed}")
+    private int seed;
 
     @Override
     public MultiLayerNetwork buildEngine(final Stream<Dialog> dialogs, final Word2Vec word2Vec) {
@@ -86,11 +93,33 @@ class RnnEngineImpl implements RnnEngine {
         net.init();
         net.setListeners(new ScoreIterationListener(200));
 
-        final DataSetIterator iterator = new DialogsDataSetIterator(list, batchSize, maxWordsInDialog, layerSize);
+        Collections.shuffle(list, new Random(seed));
+        int splitPoint = list.size() * 9 / 10;
+
+        final DataSetIterator train = new DialogsDataSetIterator(list.subList(0, splitPoint), batchSize, maxWordsInDialog, layerSize);
+        final DataSetIterator test = new DialogsDataSetIterator(list.subList(splitPoint, list.size()), batchSize, maxWordsInDialog, layerSize);
 
         for (int i = 0; i < epochs; i++) {
             log.info("Epoch {}...", i);
-            net.fit(iterator);
+            net.fit(train);
+
+            train.reset();
+            System.out.println("Epoch " + i + " complete. Starting evaluation:");
+
+            Evaluation evaluation = new Evaluation();
+            while(test.hasNext()){
+                DataSet t = test.next();
+                INDArray features = t.getFeatureMatrix();
+                INDArray labels = t.getLabels();
+                INDArray inMask = t.getFeaturesMaskArray();
+                INDArray outMask = t.getLabelsMaskArray();
+                INDArray predicted = net.output(features,false,inMask,outMask);
+
+                evaluation.evalTimeSeries(labels,predicted,outMask);
+            }
+            test.reset();
+
+            System.out.println(evaluation.stats());
         }
 
         return net;
