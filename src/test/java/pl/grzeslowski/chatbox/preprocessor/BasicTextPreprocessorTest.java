@@ -30,6 +30,20 @@ public class BasicTextPreprocessorTest {
         assertThat(preprocessed).isEqualTo(expecting);
     }
     @Test
+    public void cleanCurlyBracketsWithNumbers() {
+
+        // given
+        String line = "[312][352]{c:$4444ff}CZERWONY KARZEŁ seria X{c:$c0c0ff}Odcinek 2 Ojcowie i";
+        String expecting = "[312][352]CZERWONY KARZEŁ seria XOdcinek 2 Ojcowie i";
+
+        // when
+        final String preprocessed = preprocessor.preprocess(line);
+
+        // then
+        assertThat(preprocessed).isEqualTo(expecting);
+    }
+
+    @Test
     public void cleanCurlyBracketsThatAreTwice() {
 
         // given
