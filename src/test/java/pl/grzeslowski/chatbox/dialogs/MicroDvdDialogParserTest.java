@@ -46,6 +46,30 @@ public class MicroDvdDialogParserTest {
     }
 
     @Test
+    public void shouldParseSquareBracketsDialog() {
+
+        // given
+        final List<String> lines = Arrays.asList(
+                "[12601][12673]Dobrze i to słyszeć. Jeszcze raz.",
+                "[12675][12808]Znów nie żyjesz.",
+                "[12810][13004]Te miny nie są niewypałami."
+        );
+
+        //when
+        final Set<Dialog> dialogs = parser.parse(lines).collect(Collectors.toSet());
+
+        // then
+        assertThat(dialogs).hasSize(1);
+        final Dialog dialog = dialogs.iterator().next();
+        final List<String> d = dialog.getDialog();
+        assertThat(d).hasSize(3);
+
+        assertThat(d.get(0)).isEqualTo("Dobrze i to słyszeć. Jeszcze raz.");
+        assertThat(d.get(1)).isEqualTo("Znów nie żyjesz.");
+        assertThat(d.get(2)).isEqualTo("Te miny nie są niewypałami.");
+    }
+
+    @Test
     public void shouldOmitLinesWithOnlyOneDialog() {
 
         // given

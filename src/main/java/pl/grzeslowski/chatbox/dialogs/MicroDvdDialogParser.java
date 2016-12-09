@@ -20,7 +20,13 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class MicroDvdDialogParser implements DialogParser {
     private static final Pattern LINE_PARSER_PATTERN = Pattern.compile(
-            "\\{(\\d+)\\}\\{(\\d+)\\}(.+)"
+            "[\\[{]" +
+                    "(\\d+)" +
+                    "[]}]" +
+                    "[\\[{]" +
+                    "(\\d+)" +
+                    "[]}]" +
+                    "(.+)"
     );
 
     @Value("${dialogParser.maxGapBetweenDialogs}")
