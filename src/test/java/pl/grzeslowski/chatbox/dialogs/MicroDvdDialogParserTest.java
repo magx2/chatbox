@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -31,7 +32,7 @@ public class MicroDvdDialogParserTest {
         );
 
         //when
-        final Set<Dialog> dialogs = parser.parse(lines);
+        final Set<Dialog> dialogs = parser.parse(lines).collect(Collectors.toSet());
 
         // then
         assertThat(dialogs).hasSize(1);
@@ -55,7 +56,7 @@ public class MicroDvdDialogParserTest {
         );
 
         //when
-        final Set<Dialog> dialogs = parser.parse(lines);
+        final Set<Dialog> dialogs = parser.parse(lines).collect(Collectors.toSet());
 
         // then
         assertThat(dialogs).hasSize(1);
@@ -79,7 +80,7 @@ public class MicroDvdDialogParserTest {
         );
 
         //when
-        final Set<Dialog> dialogs = parser.parse(lines);
+        final Set<Dialog> dialogs = parser.parse(lines).collect(Collectors.toSet());
 
         // then
         assertThat(dialogs).hasSize(2);
