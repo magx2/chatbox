@@ -25,9 +25,22 @@ repositories {
 	mavenCentral()
 }
 
+configurations {
+	all*.exclude group: 'org.bytedeco', module: 'javacpp-presets'
+}
+
+ext {
+	dl4jVersion = '0.7.1'
+}
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter')
 	compileOnly('org.projectlombok:lombok')
+
+	// DL4j
+	compile 'org.deeplearning4j:deeplearning4j-core:' + dl4jVersion
+	compile 'org.deeplearning4j:deeplearning4j-nlp:' + dl4jVersion
+	compile 'org.nd4j:nd4j-native-platform:' + dl4jVersion
+
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
