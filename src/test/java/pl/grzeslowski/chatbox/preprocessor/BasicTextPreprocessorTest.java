@@ -29,6 +29,19 @@ public class BasicTextPreprocessorTest {
         // then
         assertThat(preprocessed).isEqualTo(expecting);
     }
+    @Test
+    public void cleanCurlyBracketsThatAreTwice() {
+
+        // given
+        String line = "{147574}{147641}{y:i}Czasami myślę, {y:i}że dobrze byłoby zginąć.";
+        String expecting = "{147574}{147641}Czasami myślę, że dobrze byłoby zginąć.";
+
+        // when
+        final String preprocessed = preprocessor.preprocess(line);
+
+        // then
+        assertThat(preprocessed).isEqualTo(expecting);
+    }
 
     @Test
     public void shouldRemoveDash() {
