@@ -43,4 +43,5 @@ dependencies {
 	compile 'org.nd4j:nd4j-native-platform:' + dl4jVersion
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile group: 'org.easytesting', name: 'fest-assert', version: '1.4'
 }

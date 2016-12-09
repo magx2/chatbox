@@ -1,0 +1,3 @@
+dialogParser:
+  maxGapBetweenDialogs: 3
+  fps: 24
