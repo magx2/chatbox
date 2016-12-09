@@ -135,18 +135,18 @@ class DialogsDataSetIterator implements DataSetIterator {
 
     @Override
     public void setPreProcessor(DataSetPreProcessor preProcessor) {
-        throw new UnsupportedOperationException("Reset not suported");
+        throw new UnsupportedOperationException("setPreProcessor not suported");
 
     }
 
     @Override
     public DataSetPreProcessor getPreProcessor() {
-        throw new UnsupportedOperationException("Reset not suported");
+        throw new UnsupportedOperationException("getPreProcessor not suported");
     }
 
     @Override
     public List<String> getLabels() {
-        throw new UnsupportedOperationException("Reset not suported");
+        throw new UnsupportedOperationException("getLabels not suported");
     }
 
     @Override
