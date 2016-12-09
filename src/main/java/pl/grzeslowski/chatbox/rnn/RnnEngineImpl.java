@@ -107,19 +107,10 @@ class RnnEngineImpl implements RnnEngine {
     }
 
     private List<INDArray> tokenize(String question, Word2Vec word2Vec) {
-        final List<INDArray> listOfWords = Arrays.stream(question.split("\\s")) // split on white space
+        return Arrays.stream(question.split("\\s")) // split on white space
                 .filter(word2Vec::hasWord)
                 .map(word2Vec::getWordVectorMatrix)
                 .collect(toList());
-        return listOfWords;
-//        final INDArray accumulator = Nd4j.zeros(1, maxWordsInDialog * layerSize);
-//        for (int i = 0; i < listOfWords.size(); i++) {
-//            accumulator.put(
-//                    new INDArrayIndex[]{NDArrayIndex.all(), NDArrayIndex.point(i * layerSize)},
-//                    listOfWords.get(i)
-//            );
-//        }
-//        return accumulator;
     }
 
     private String findQuestion(Dialog dialog) {
