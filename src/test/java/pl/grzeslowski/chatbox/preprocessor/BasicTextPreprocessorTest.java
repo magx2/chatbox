@@ -30,5 +30,33 @@ public class BasicTextPreprocessorTest {
         assertThat(preprocessed).isEqualTo(expecting);
     }
 
+    @Test
+    public void shouldRemoveDash() {
+
+        // given
+        String line = "{9111}{9124} - Może ma rację.";
+        String expecting = "{9111}{9124}  Może ma rację.";
+
+        // when
+        final String preprocessed = preprocessor.preprocess(line);
+
+        // then
+        assertThat(preprocessed).isEqualTo(expecting);
+    }
+
+    @Test
+    public void shouldRemoveOddChars() {
+
+        // given
+        String line = "{9111}{9124} # $ % & | <>=:; Może ma rację.";
+        String expecting = "{9111}{9124}       Może ma rację.";
+
+        // when
+        final String preprocessed = preprocessor.preprocess(line);
+
+        // then
+        assertThat(preprocessed).isEqualTo(expecting);
+    }
+
 
 }
