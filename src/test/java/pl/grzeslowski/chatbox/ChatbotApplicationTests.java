@@ -1,4 +1,4 @@
-package pl.grzeslowski;
+package pl.grzeslowski.chatbox;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
