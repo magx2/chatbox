@@ -1,6 +1,5 @@
 package pl.grzeslowski.chatbox.rnn;
 
-import org.datavec.api.split.CollectionInputSplit;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.models.word2vec.Word2Vec;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;

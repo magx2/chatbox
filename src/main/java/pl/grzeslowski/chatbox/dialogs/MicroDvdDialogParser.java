@@ -18,7 +18,7 @@ import static java.util.stream.Collector.Characteristics.IDENTITY_FINISH;
 import static java.util.stream.Collectors.toList;
 
 @Service
-public class MicroDvdDialogParser implements DialogParser {
+class MicroDvdDialogParser implements DialogParser {
     private static final Pattern LINE_PARSER_PATTERN = Pattern.compile(
             "[\\[{]" +
                     "(\\d+)" +
@@ -30,9 +30,9 @@ public class MicroDvdDialogParser implements DialogParser {
     );
 
     @Value("${dialogParser.maxGapBetweenDialogs}")
-    int maxGapBetweenDialogs;
+    private int maxGapBetweenDialogs;
     @Value("${dialogParser.fps}")
-    int fps;
+    private int fps;
 
     @Override
     public Stream<Dialog> parse(Stream<String> lines) {
