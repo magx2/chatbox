@@ -1,3 +1,14 @@
+seed: 1337
 dialogParser:
   maxGapBetweenDialogs: 3
   fps: 24
+word2vec:
+  pathToInputFile: 'data/subtitles/joinedFile.txt'
+  models:
+    pathToModel: 'data/models/word2vec.bin'
+    pathToWordVectors: 'data/models/wordVectors.txt'
+  hyper:
+    minWordFrequency: 5
+    iterations: 1
+    layerSize: 100
+    windowsSize: 5
