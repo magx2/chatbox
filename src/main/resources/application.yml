@@ -2,6 +2,7 @@ seed: 1337
 dialogParser:
   maxGapBetweenDialogs: 3
   fps: 24
+  pathToSubtitles: 'data/subtitles'
 word2vec:
   pathToInputFile: 'data/joinedFile.txt'
   models:
@@ -14,3 +15,14 @@ word2vec:
     windowsSize: 5
 subtitles:
   path: 'data/subtitles'
+rnn:
+  maxWordsInDialog: 30
+  batchSize: 50
+  epochs: 5
+  regularization: true
+  learningRate: 0.0018
+  l2: 1e-5
+  gradientNormalizationThreshold: 1.0
+  layers:
+    l0:
+      nout: 200

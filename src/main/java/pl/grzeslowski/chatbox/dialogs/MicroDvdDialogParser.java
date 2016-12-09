@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collector.Characteristics.IDENTITY_FINISH;
 import static java.util.stream.Collectors.toList;
@@ -29,8 +30,8 @@ public class MicroDvdDialogParser implements DialogParser {
     int fps;
 
     @Override
-    public Set<Dialog> parse(List<String> lines) {
-        return lines.stream()
+    public Stream<Dialog> parse(Stream<String> lines) {
+        return lines
                 .map(this::parseDialogLine)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -38,8 +39,7 @@ public class MicroDvdDialogParser implements DialogParser {
                 .stream()
                 .filter(dialogLines -> dialogLines.size() >= 2)
                 .map(dialogLines -> dialogLines.stream().map(DialogLine::getText).collect(toList()))
-                .map(Dialog::new)
-                .collect(toSet());
+                .map(Dialog::new);
     }
 
     private Optional<DialogLine> parseDialogLine(String line) {
