@@ -12,6 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 import pl.grzeslowski.chatbox.dialogs.Dialog;
 import pl.grzeslowski.chatbox.dialogs.DialogParser;
 import pl.grzeslowski.chatbox.files.FileReader;
+import pl.grzeslowski.chatbox.preprocessor.TextPreprocessor;
 import pl.grzeslowski.chatbox.rnn.RnnEngine;
 import pl.grzeslowski.chatbox.word2vec.Word2VecService;
 
@@ -43,6 +44,9 @@ public class ChatBotApplication implements CommandLineRunner{
 	private DialogParser dialogParser;
 	@Autowired
 	private RnnEngine rnnEngine;
+	@Autowired
+	private TextPreprocessor textPreprocessor;
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(ChatBotApplication.class, args);
@@ -56,7 +60,8 @@ public class ChatBotApplication implements CommandLineRunner{
 		final Stream<String> lines = fileReader.findAllFilesInDir(pathToSubtitles)
 				.map(file -> fileReader.readFile(file))
 				.filter(Optional::isPresent)
-				.flatMap(Optional::get);
+				.flatMap(Optional::get)
+				.map(textPreprocessor::preprocess);
 		final Stream<Dialog> dialogs = dialogParser.parse(lines)
 				.filter(dialog -> !hasSentencesLongerThanMax(dialog));
 		final MultiLayerNetwork multiLayerNetwork = rnnEngine.buildEngine(dialogs, word2Vec);

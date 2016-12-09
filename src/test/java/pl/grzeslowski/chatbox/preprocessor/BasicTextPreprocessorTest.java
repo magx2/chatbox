@@ -21,13 +21,13 @@ public class BasicTextPreprocessorTest {
 
         // given
         String line = "{9111}{9124}{Y:i}Może ma rację.";
-        String expecing = "{9111}{9124}{Y:i}Może ma rację.";
+        String expecting = "{9111}{9124}Może ma rację.";
 
         // when
         final String preprocessed = preprocessor.preprocess(line);
 
         // then
-        assertThat(preprocessed).isEqualTo(expecing);
+        assertThat(preprocessed).isEqualTo(expecting);
     }
 
 
