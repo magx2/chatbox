@@ -14,15 +14,17 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 public class FileReader {
-    private final List<Charset> charsets = Stream.of("UTF-8", "Windows-1250", "ANSI")
+    private final List<Charset> charsets = Stream.of("UTF-8", "Windows-1250", "ISO-8859-1", "ISO-8859-2", "US-ASCII")
             .map(Charset::forName)
-            .collect(Collectors.toList());
+            .collect(toList());
 
     public Stream<String> readFile(Path path, Charset charset) {
-        try {
-            return Files.lines(path, charset);
+        try (Stream<String> stream = Files.lines(path, charset)) {
+            return stream.collect(toList()).stream();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -33,7 +35,7 @@ public class FileReader {
                 .map(charset -> {
                     try {
                         return readFile(path, charset);
-                    } catch (UncheckedIOException e) {
+                    } catch (Exception e) {
                         return null;
                     }
                 })
@@ -55,7 +57,7 @@ public class FileReader {
                 .map(this::readFile)
                 .filter(Optional::isPresent)
                 .flatMap(Optional::get)
-                .collect(Collectors.toList());
+                .collect(toList());
         try {
             Files.write(Paths.get(newFile), blob, Charset.forName("UTF-8"));
         } catch (IOException e) {
