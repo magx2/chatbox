@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import pl.grzeslowski.chatbox.TestApplicationConfiguration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 import static org.fest.assertions.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = TestApplicationConfiguration.class)
 public class MicroDvdDialogParserTest {
     @Autowired
     private MicroDvdDialogParser parser;
