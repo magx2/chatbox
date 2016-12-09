@@ -50,16 +50,9 @@ class DialogsDataSetIterator implements DataSetIterator {
         for (RnnEngineImpl.VecDialog dialog : toProcess) {
             maxLength = Math.max(maxLength, dialog.getQuestionSize());
             maxLength = Math.max(maxLength, dialog.getAnswerSize());
-            if(dialog.getQuestionSize() > maxWordsInDialog) {
-                System.out.println("");
-            }
         }
 
-        try {
-            checkArgument(maxLength <= maxWordsInDialog, format("maxLength = %s > maxWordsInDialog = %s", maxLength, maxWordsInDialog));
-        } catch (IllegalArgumentException e) {
-            throw e;
-        }
+        checkArgument(maxLength <= maxWordsInDialog, format("maxLength = %s > maxWordsInDialog = %s", maxLength, maxWordsInDialog));
 
         final INDArray features = Nd4j.zeros(toProcess.size(), layerSize, maxLength);
         final INDArray labels = Nd4j.zeros(toProcess.size(), layerSize, maxLength);
