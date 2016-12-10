@@ -1,0 +1,12 @@
+howManyWebDrivers: 5
+napisy24:
+  startId: 98407
+  log:
+    email: "alfonsocaponee@gmail.com"
+    password: "x"
+delays:
+  waitAfterGetLink: 20
+  waitAfterClickDownload: 20
+  waitAfterMainPage: 20
+  waitAfterSubmitLogin: 20
+driverPath: "bin/chromedriver.exe"
