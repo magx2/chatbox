@@ -61,7 +61,7 @@ public class ScrapRunnable implements Runnable, AutoCloseable {
         } finally {
             webDriver.quit();
         }
-
+        log.info("Thread has ended");
     }
 
     private Consumer<WebElement> clickSubtitlesLink() {
