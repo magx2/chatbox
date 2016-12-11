@@ -23,14 +23,15 @@ public class FileReader {
             .map(Charset::forName)
             .collect(toList());
 
+    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
     @Autowired
     private TextPreprocessor textPreprocessor;
 
-    public Stream<String> readFile(Path path, Charset charset) {
+    private Stream<String> readFile(Path path, Charset charset) {
         try (Stream<String> stream = Files.lines(path, charset)) {
             return stream.collect(toList())
                     .stream()
-                    .map(textPreprocessor::preprocess);
+                    .flatMap(textPreprocessor::preprocess);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

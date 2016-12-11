@@ -1,5 +1,7 @@
 package pl.grzeslowski.chatbox.preprocessor;
 
+import java.util.stream.Stream;
+
 public interface TextPreprocessor {
-    String preprocess(String line);
+    Stream<String> preprocess(String line);
 }

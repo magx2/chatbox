@@ -3,18 +3,27 @@ package pl.grzeslowski.chatbox.preprocessor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 class BasicTextPreprocessor implements TextPreprocessor {
 
     @Override
-    public String preprocess(String line) {
-        //noinspection OptionalGetWithoutIsPresent
-        return Optional.of(line)
+    public Stream<String> preprocess(String line) {
+        return Stream.of(line)
                 .map(this::removeNotNeededCurlyBrackets)
                 .map(this::removeDash)
                 .map(this::removeOddChars)
-                .get();
+                .flatMap(this::removeNapisy24AndHatak);
+    }
+
+    private Stream<String> removeNapisy24AndHatak(String line) {
+        final String lower = line.toLowerCase();
+        if(lower.contains("napisy24") || lower.contains("hatak")) {
+            return Stream.empty();
+        } else {
+            return Stream.of(line);
+        }
     }
 
     private String remove(String line, String patternToRemove) {
