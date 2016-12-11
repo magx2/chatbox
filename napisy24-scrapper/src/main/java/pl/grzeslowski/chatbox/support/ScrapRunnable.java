@@ -44,7 +44,7 @@ public class ScrapRunnable implements Runnable, AutoCloseable {
                 log.info("Processing ID {}", processId);
                 try {
                     webDriver.get(createLink(processId));
-                    findSubtitlesLink(webDriver).ifPresent(clickSubtitlesLink());
+                    findSubtitlesLink(webDriver).ifPresent(this::clickSubtitlesLink);
                 } catch (Exception e) {
                     log.warn("Got error while downloading subtitles with ID {}. Error message: {}.",
                             processId, e.getMessage());
@@ -64,15 +64,13 @@ public class ScrapRunnable implements Runnable, AutoCloseable {
         log.info("Thread has ended");
     }
 
-    private Consumer<WebElement> clickSubtitlesLink() {
-        return element -> {
-            element.click();
-            try {
-                TimeUnit.SECONDS.sleep(waitAfterClickDownload);
-            } catch (InterruptedException e) {
-                // ignore
-            }
-        };
+    private void clickSubtitlesLink(WebElement element) {
+        element.click();
+        try {
+            TimeUnit.SECONDS.sleep(waitAfterClickDownload);
+        } catch (InterruptedException e) {
+            // ignore
+        }
     }
 
     private Optional<WebElement> findSubtitlesLink(WebDriver webDriver) {
