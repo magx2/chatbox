@@ -57,7 +57,7 @@ public class ScrapRunnable implements Runnable, AutoCloseable {
                         return 100_000;
                     }
                 });
-            } while (run.get());
+            } while (run.get() && id.get() > 0);
         } finally {
             webDriver.quit();
         }
