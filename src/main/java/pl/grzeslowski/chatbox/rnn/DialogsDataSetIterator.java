@@ -76,11 +76,7 @@ class DialogsDataSetIterator implements DataSetIterator {
 
         for (int k = 0; k < putFromHere.size(); k++) {
             INDArray vector = putFromHere.get(k);
-            try {
-                array.put(new INDArrayIndex[]{NDArrayIndex.point(idx), NDArrayIndex.all(), NDArrayIndex.point(k)}, vector);
-            } catch (IllegalStateException e) {
-                throw e;
-            }
+            array.put(new INDArrayIndex[]{NDArrayIndex.point(idx), NDArrayIndex.all(), NDArrayIndex.point(k)}, vector);
 
             temp[1] = k;
             mask.putScalar(temp, 1.0);
