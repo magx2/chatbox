@@ -22,7 +22,8 @@ class BasicTextPreprocessor implements TextPreprocessor {
     }
 
     private String removeNotNeededCurlyBrackets(String line) {
-        return remove(line, "\\{\\D+?.*?\\}");
+        final String firstIteration = remove(line, "\\{\\D+?.*?\\}");
+        return remove(firstIteration, "\\{\\}");
     }
 
     private String removeDash(String line) {

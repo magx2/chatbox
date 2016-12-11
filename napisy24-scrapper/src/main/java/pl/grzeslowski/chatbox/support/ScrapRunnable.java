@@ -32,9 +32,8 @@ public class ScrapRunnable implements Runnable, AutoCloseable {
     public void run() {
         final WebDriver webDriver = webDriverFactory.getObject();
         try {
-            int processId;
             do {
-                processId = id.getAndAdd(-1);
+                final int processId = id.getAndAdd(-1);
                 log.info("Processing ID {}", processId);
                 try {
                     webDriver.get(createLink(processId));
@@ -46,7 +45,15 @@ public class ScrapRunnable implements Runnable, AutoCloseable {
                     log.warn("Got error while downloading subtitles with ID {}. Error message: {}.",
                             processId, e.getMessage());
                 }
-            } while (processId > 0 && run.get());
+                id.updateAndGet(operand -> {
+                    if(operand > 0) {
+                        return operand;
+                    } else {
+                        log.info("Went down to 0!");
+                        return 100_000;
+                    }
+                });
+            } while (run.get());
         } finally {
             webDriver.quit();
         }

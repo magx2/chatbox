@@ -85,5 +85,17 @@ public class BasicTextPreprocessorTest {
         assertThat(preprocessed).isEqualTo(expecting);
     }
 
+    @Test
+    public void shouldRemoveCurlyBrackets() {
 
+        // given
+        String line = "{9111}{9124} {} to ja";
+        String expecting = "{9111}{9124}  to ja";
+
+        // when
+        final String preprocessed = preprocessor.preprocess(line);
+
+        // then
+        assertThat(preprocessed).isEqualTo(expecting);
+    }
 }
