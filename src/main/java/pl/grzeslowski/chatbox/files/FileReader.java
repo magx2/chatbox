@@ -23,9 +23,12 @@ public class FileReader {
             .map(Charset::forName)
             .collect(toList());
 
-    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+    private final TextPreprocessor textPreprocessor;
+
     @Autowired
-    private TextPreprocessor textPreprocessor;
+    public FileReader(TextPreprocessor textPreprocessor) {
+        this.textPreprocessor = textPreprocessor;
+    }
 
     private Stream<String> readFile(Path path, Charset charset) {
         try (Stream<String> stream = Files.lines(path, charset)) {
