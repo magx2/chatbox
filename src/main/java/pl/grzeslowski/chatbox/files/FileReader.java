@@ -63,6 +63,8 @@ public class FileReader {
                 .map(this::readFile)
                 .filter(Optional::isPresent)
                 .flatMap(Optional::get)
+                .map(line -> line.replaceAll("\\{", " "))
+                .map(line -> line.replaceAll("}", " "))
                 .collect(toList());
         try {
             Files.write(Paths.get(newFile), blob, Charset.forName("UTF-8"));
