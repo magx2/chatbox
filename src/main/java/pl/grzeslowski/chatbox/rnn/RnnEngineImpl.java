@@ -62,6 +62,8 @@ class RnnEngineImpl implements RnnEngine {
                 .map(dialog -> dialogToVec(dialog, word2Vec))
                 .filter(dialog -> dialog.getQuestionSize() >= 1)
                 .filter(dialog -> dialog.getAnswerSize() >= 1)
+                .filter(dialog -> dialog.getQuestionSize() <= maxWordsInDialog)
+                .filter(dialog -> dialog.getAnswerSize() <= maxWordsInDialog)
                 .collect(toList());
 
 

@@ -59,16 +59,8 @@ public class ChatBotApplication implements CommandLineRunner{
 				.map(file -> fileReader.readFile(file))
 				.filter(Optional::isPresent)
 				.flatMap(Optional::get);
-		final Stream<Dialog> dialogs = dialogParser.parse(lines).filter(dialog -> !hasSentencesLongerThanMax(dialog));
+		final Stream<Dialog> dialogs = dialogParser.parse(lines);
 		final MultiLayerNetwork multiLayerNetwork = rnnEngine.buildEngine(dialogs, word2Vec);
-	}
-
-	private boolean hasSentencesLongerThanMax(Dialog dialog) {
-		return dialog.getDialog()
-				.stream()
-				.filter(line -> line.length() > maxWordsInDialog)
-				.findFirst()
-				.isPresent();
 	}
 
 	private void prepareInputFileForWord2Vec() {
