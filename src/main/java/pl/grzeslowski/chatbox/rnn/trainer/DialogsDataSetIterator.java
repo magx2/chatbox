@@ -13,19 +13,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.String.format;
 
 class DialogsDataSetIterator implements DataSetIterator {
-    private final List<VecDialog> dialogs;
+    private final Stream<VecDialog> dialogs;
     private final int batchSize;
     private final int maxWordsInDialog;
     private final int layerSize;
     private Iterator<VecDialog> iterator;
     private int cursor;
 
-    DialogsDataSetIterator(List<VecDialog> dialogs, int batchSize, int maxWordsInDialog, int layerSize) {
+    DialogsDataSetIterator(Stream<VecDialog> dialogs, int batchSize, int maxWordsInDialog, int layerSize) {
         this.dialogs = dialogs;
         iterator = dialogs.iterator();
 
@@ -85,7 +86,7 @@ class DialogsDataSetIterator implements DataSetIterator {
 
     @Override
     public int totalExamples() {
-        return dialogs.size();
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -100,7 +101,7 @@ class DialogsDataSetIterator implements DataSetIterator {
 
     @Override
     public boolean resetSupported() {
-        return true;
+        return false;
     }
 
     @Override
@@ -110,8 +111,7 @@ class DialogsDataSetIterator implements DataSetIterator {
 
     @Override
     public void reset() {
-        iterator = dialogs.iterator();
-        cursor = 0;
+        throw new UnsupportedOperationException();
     }
 
     @Override

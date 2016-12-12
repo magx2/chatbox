@@ -41,7 +41,7 @@ public class MicroDvdDialogLoaderTest {
         given(fileReader.subtitlesLines()).willReturn(lines.stream());
 
         //when
-        final Set<Dialog> dialogs = loader.load().collect(Collectors.toSet());
+        final Set<Dialog> dialogs = loader.loadTrainData().collect(Collectors.toSet());
 
         // then
         assertThat(dialogs).hasSize(1);
@@ -66,7 +66,7 @@ public class MicroDvdDialogLoaderTest {
         given(fileReader.subtitlesLines()).willReturn(lines.stream());
 
         //when
-        final Set<Dialog> dialogs = loader.load().collect(Collectors.toSet());
+        final Set<Dialog> dialogs = loader.loadTrainData().collect(Collectors.toSet());
 
         // then
         assertThat(dialogs).hasSize(1);
@@ -91,7 +91,7 @@ public class MicroDvdDialogLoaderTest {
         given(fileReader.subtitlesLines()).willReturn(lines.stream());
 
         //when
-        final Set<Dialog> dialogs = loader.load().collect(Collectors.toSet());
+        final Set<Dialog> dialogs = loader.loadTrainData().collect(Collectors.toSet());
 
         // then
         assertThat(dialogs).hasSize(1);
@@ -116,7 +116,7 @@ public class MicroDvdDialogLoaderTest {
         given(fileReader.subtitlesLines()).willReturn(lines.stream());
 
         //when
-        final List<Dialog> dialogs = loader.load().collect(Collectors.toList());
+        final List<Dialog> dialogs = loader.loadTrainData().collect(Collectors.toList());
 
         // then
         assertThat(dialogs).hasSize(2);

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pl.grzeslowski.chatbox.files.FileReader;
+import pl.grzeslowski.chatbox.rnn.trainer.splitters.TestSetSplitter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,6 @@ import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.stream.Collector.Characteristics.IDENTITY_FINISH;
-import static java.util.stream.Collectors.toList;
 
 @Service
 class MicroDvdDialogLoader implements DialogLoader {
@@ -49,17 +49,25 @@ class MicroDvdDialogLoader implements DialogLoader {
     }
 
     @Override
-    public Stream<Dialog> load() {
+    public TestSetSplitter.LearningSets<Stream<Dialog>> loadTrainData() {
         log.info("Creating stream with all dialogs");
-        return fileReader.subtitlesLines()
-                .map(this::parseDialogLine)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(new DialogLineCollector(maxGapBetweenDialogs))
-                .stream()
-                .filter(dialogLines -> dialogLines.size() >= 2)
-                .map(dialogLines -> dialogLines.stream().map(DialogLine::getText).collect(toList()))
-                .map(Dialog::new);
+
+        final TestSetSplitter.LearningSets<Stream<String>> learningSets = fileReader.subtitlesLines();
+        return new TestSetSplitter.LearningSets<>(
+                map(learningSets.getTrainingSet()),
+                map(learningSets.getTestingSet())
+        );
+    }
+
+    private Stream<Stream<Dialog>> map(Stream<Stream<String>> learningStream) {
+        return learningStream
+                .map(stream -> stream.map(this::parseDialogLine).filter(Optional::isPresent).map(Optional::get))
+                .map(stream -> stream.collect(new DialogLineCollector(maxGapBetweenDialogs)))
+                .map(list -> list.stream()
+                        .filter(dialogLines -> dialogLines.size() >= 2))
+                .map(stream -> stream
+                        .map(dialogLines -> dialogLines.stream().map(DialogLine::getText)))
+                .map(stream -> stream.map(Dialog::new));
     }
 
     private Optional<DialogLine> parseDialogLine(String line) {

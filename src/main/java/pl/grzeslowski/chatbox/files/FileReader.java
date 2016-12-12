@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pl.grzeslowski.chatbox.preprocessor.TextPreprocessor;
+import pl.grzeslowski.chatbox.rnn.trainer.splitters.TestSetSplitter;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -18,6 +19,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -27,14 +29,17 @@ public class FileReader {
             .map(Charset::forName)
             .collect(toList());
     private final TextPreprocessor textPreprocessor;
+    private final TestSetSplitter testSetSplitter;
+
     @Value("${dialogLoader.pathToSubtitles}")
     private String pathToSubtitles;
     @Value("${subtitles.path}")
     private String subtitlesPath;
 
     @Autowired
-    public FileReader(TextPreprocessor textPreprocessor) {
-        this.textPreprocessor = textPreprocessor;
+    public FileReader(TextPreprocessor textPreprocessor, TestSetSplitter testSetSplitter) {
+        this.textPreprocessor = checkNotNull(textPreprocessor);
+        this.testSetSplitter = checkNotNull(testSetSplitter);
     }
 
     private Stream<String> readFile(Path path, Charset charset) {
@@ -48,7 +53,7 @@ public class FileReader {
     }
 
     public Optional<Stream<String>> readFile(Path path) {
-        log.info("Reading file {}.", path.toFile().getName());
+        log.trace("Reading file {}.", path.toFile().getName());
         return charsets.stream()
                 .map(charset -> {
                     try {
@@ -70,11 +75,21 @@ public class FileReader {
         }
     }
 
-    public Stream<String> subtitlesLines() {
-        log.info("Crating stream of all files in dir {}.", pathToSubtitles);
-        return findAllFilesInDir(pathToSubtitles)
+    public TestSetSplitter.LearningSets<Stream<String>> subtitlesLines() {
+        log.info("Creating stream of all files in dir {}.", pathToSubtitles);
+
+        List<Path> subtitles = findAllFilesInDir(pathToSubtitles).collect(toList());
+        final TestSetSplitter.LearningSets<Path> pathLearningSets = testSetSplitter.splitIntoSets(subtitles);
+        return new TestSetSplitter.LearningSets<>(
+                readFromStreamOfFileNames(pathLearningSets.getTrainingSet()),
+                readFromStreamOfFileNames(pathLearningSets.getTestingSet())
+        );
+    }
+
+    private Stream<Stream<String>> readFromStreamOfFileNames(Stream<Path> stream) {
+        return stream
                 .map(this::readFile)
                 .filter(Optional::isPresent)
-                .flatMap(Optional::get);
+                .map(Optional::get);
     }
 }

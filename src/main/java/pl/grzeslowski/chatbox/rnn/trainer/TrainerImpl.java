@@ -10,17 +10,17 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import pl.grzeslowski.chatbox.dialogs.Dialog;
 import pl.grzeslowski.chatbox.dialogs.DialogLoader;
 import pl.grzeslowski.chatbox.dialogs.VecDialog;
 import pl.grzeslowski.chatbox.dialogs.VecDialogFunction;
 import pl.grzeslowski.chatbox.misc.RandomFactory;
 import pl.grzeslowski.chatbox.rnn.RnnEngine;
+import pl.grzeslowski.chatbox.rnn.trainer.splitters.TestSetSplitter;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.util.stream.Collectors.toList;
 
 @Service
 class TrainerImpl implements Trainer {
@@ -48,47 +48,43 @@ class TrainerImpl implements Trainer {
         this.vecDialogFunction = checkNotNull(vecDialogFunction);
     }
 
-    @Override
-    public MultiLayerNetwork trainAndTest() {
-        final List<VecDialog> list = dialogLoader.load()
-                .map(vecDialogFunction)
+    private DataSetIterator createDateSetIterator(Stream<Stream<Dialog>> stream) {
+        final Stream<VecDialog> vecDialogs = stream.flatMap(s -> s.map(vecDialogFunction))
                 .filter(dialog -> dialog.getQuestionSize() >= 1)
                 .filter(dialog -> dialog.getAnswerSize() >= 1)
                 .filter(dialog -> dialog.getQuestionSize() <= maxWordsInDialog)
-                .filter(dialog -> dialog.getAnswerSize() <= maxWordsInDialog)
-                .collect(toList());
+                .filter(dialog -> dialog.getAnswerSize() <= maxWordsInDialog);
+        return new DialogsDataSetIterator(vecDialogs, batchSize, maxWordsInDialog, layerSize);
+    }
+
+    @Override
+    public MultiLayerNetwork trainAndTest() {
+        final TestSetSplitter.LearningSets<Stream<Dialog>> learningSets = dialogLoader.loadTrainData();
+
         final MultiLayerNetwork net = rnnEngine.buildEngine();
         log.info("Initializing model");
         net.init();
         net.setListeners(new ScoreIterationListener(200));
 
-        Collections.shuffle(list, randomFactory.getObject());
-        int splitPoint = list.size() * 9 / 10;
-
-        final DataSetIterator train = new DialogsDataSetIterator(list.subList(0, splitPoint), batchSize, maxWordsInDialog, layerSize);
-        final DataSetIterator test = new DialogsDataSetIterator(list.subList(splitPoint, list.size()), batchSize, maxWordsInDialog, layerSize);
+        final DataSetIterator train = createDateSetIterator(learningSets.getTrainingSet());
+        final DataSetIterator test = createDateSetIterator(learningSets.getTestingSet());
 
         log.info("Starting learning");
-        for (int i = 0; i < epochs; i++) {
-            log.info("Epoch {}...", i);
-            net.fit(train);
+        net.fit(train);
+        log.info("Training complete. Starting evaluation:");
 
-            train.reset();
-            log.info("Epoch " + i + " complete. Starting evaluation:");
+        Evaluation evaluation = new Evaluation();
+        while (test.hasNext()) {
+            DataSet t = test.next();
+            INDArray features = t.getFeatureMatrix();
+            INDArray labels = t.getLabels();
+            INDArray inMask = t.getFeaturesMaskArray();
+            INDArray outMask = t.getLabelsMaskArray();
+            INDArray predicted = net.output(features, false, inMask, outMask);
 
-            Evaluation evaluation = new Evaluation();
-            while (test.hasNext()) {
-                DataSet t = test.next();
-                INDArray features = t.getFeatureMatrix();
-                INDArray labels = t.getLabels();
-                INDArray inMask = t.getFeaturesMaskArray();
-                INDArray outMask = t.getLabelsMaskArray();
-                INDArray predicted = net.output(features, false, inMask, outMask);
-
-                evaluation.evalTimeSeries(labels, predicted, outMask);
-            }
-            test.reset();
+            evaluation.evalTimeSeries(labels, predicted, outMask);
         }
+
         return net;
     }
 }
