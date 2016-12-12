@@ -25,7 +25,7 @@ class VecDialogFunctionImpl implements VecDialogFunction {
 
     @Override
     public VecDialog apply(Dialog dialog) {
-        final Word2Vec word2Vec = word2VecService.computeModel();
+        final Word2Vec word2Vec = word2VecService.computeModel(); // TODO don't like this. It look like this is computed with every invocation of apply method
 
         final String question = findQuestion(dialog);
         final String answer = findAnswer(dialog);
