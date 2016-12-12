@@ -1,6 +1,6 @@
 seed: 1337
 dialogParser:
-  maxGapBetweenDialogs: 3
+  maxGapBetweenDialogs: 3 # in secs
   fps: 24
   pathToSubtitles: 'D:\Programowanie\deep_learning\chatbox\data/subtitles'
 word2vec:
