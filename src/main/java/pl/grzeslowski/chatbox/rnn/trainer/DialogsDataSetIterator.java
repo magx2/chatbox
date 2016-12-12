@@ -7,6 +7,7 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.indexing.INDArrayIndex;
 import org.nd4j.linalg.indexing.NDArrayIndex;
+import pl.grzeslowski.chatbox.dialogs.VecDialog;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,14 +18,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.String.format;
 
 class DialogsDataSetIterator implements DataSetIterator {
-    private final List<TrainerImpl.VecDialog> dialogs;
+    private final List<VecDialog> dialogs;
     private final int batchSize;
     private final int maxWordsInDialog;
     private final int layerSize;
-    private Iterator<TrainerImpl.VecDialog> iterator;
+    private Iterator<VecDialog> iterator;
     private int cursor;
 
-    DialogsDataSetIterator(List<TrainerImpl.VecDialog> dialogs, int batchSize, int maxWordsInDialog, int layerSize) {
+    DialogsDataSetIterator(List<VecDialog> dialogs, int batchSize, int maxWordsInDialog, int layerSize) {
         this.dialogs = dialogs;
         iterator = dialogs.iterator();
 
@@ -39,14 +40,14 @@ class DialogsDataSetIterator implements DataSetIterator {
             throw new NoSuchElementException();
         }
 
-        List<TrainerImpl.VecDialog> toProcess = new ArrayList<>(howMuchToTake);
+        List<VecDialog> toProcess = new ArrayList<>(howMuchToTake);
         for (int i = 0; i < howMuchToTake && iterator.hasNext(); i++) {
             toProcess.add(iterator.next());
             cursor++;
         }
 
         int maxLength = 0;
-        for (TrainerImpl.VecDialog dialog : toProcess) {
+        for (VecDialog dialog : toProcess) {
             maxLength = Math.max(maxLength, dialog.getQuestionSize());
             maxLength = Math.max(maxLength, dialog.getAnswerSize());
         }
@@ -60,7 +61,7 @@ class DialogsDataSetIterator implements DataSetIterator {
         INDArray labelsMask = Nd4j.zeros(toProcess.size(), maxLength);
 
         for (int i = 0; i < toProcess.size(); i++) {
-            final TrainerImpl.VecDialog dialog = toProcess.get(i);
+            final VecDialog dialog = toProcess.get(i);
 
             putIntoArray(features, featuresMask, i, dialog.getQuestion());
             putIntoArray(labels, labelsMask, i, dialog.getAnswer());
