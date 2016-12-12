@@ -15,7 +15,6 @@ import pl.grzeslowski.chatbox.dialogs.VecDialog;
 import pl.grzeslowski.chatbox.dialogs.VecDialogFunction;
 import pl.grzeslowski.chatbox.misc.RandomFactory;
 import pl.grzeslowski.chatbox.rnn.RnnEngine;
-import pl.grzeslowski.chatbox.word2vec.Word2VecService;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +28,6 @@ class TrainerImpl implements Trainer {
 
     private final DialogLoader dialogLoader;
     private final RandomFactory randomFactory;
-    private final Word2VecService word2VecService;
     private final RnnEngine rnnEngine;
     private final VecDialogFunction vecDialogFunction;
 
@@ -43,10 +41,9 @@ class TrainerImpl implements Trainer {
     private int layerSize;
 
     @Autowired
-    public TrainerImpl(DialogLoader dialogLoader, RandomFactory randomFactory, Word2VecService word2VecService, RnnEngine rnnEngine, VecDialogFunction vecDialogFunction) {
+    public TrainerImpl(DialogLoader dialogLoader, RandomFactory randomFactory, RnnEngine rnnEngine, VecDialogFunction vecDialogFunction) {
         this.dialogLoader = checkNotNull(dialogLoader);
         this.randomFactory = checkNotNull(randomFactory);
-        this.word2VecService = checkNotNull(word2VecService);
         this.rnnEngine = checkNotNull(rnnEngine);
         this.vecDialogFunction = checkNotNull(vecDialogFunction);
     }
