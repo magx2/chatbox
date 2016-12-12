@@ -1,10 +1,15 @@
 package pl.grzeslowski.chatbox.dialogs;
 
 import com.google.common.collect.Sets;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import pl.grzeslowski.chatbox.files.FileReader;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -34,9 +39,12 @@ class MicroDvdDialogParser implements DialogParser {
     @Value("${dialogParser.fps}")
     private int fps;
 
+    @Autowired
+    private FileReader fileReader;
+
     @Override
-    public Stream<Dialog> parse(Stream<String> lines) {
-        return lines
+    public Stream<Dialog> load() {
+        return fileReader.subtitlesLines()
                 .map(this::parseDialogLine)
                 .filter(Optional::isPresent)
                 .map(Optional::get)

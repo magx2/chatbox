@@ -1,6 +1,7 @@
 package pl.grzeslowski.chatbox.files;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pl.grzeslowski.chatbox.preprocessor.TextPreprocessor;
 
@@ -22,8 +23,11 @@ public class FileReader {
     private final List<Charset> charsets = Stream.of("UTF-8", "Windows-1250", "ISO-8859-1", "ISO-8859-2", "US-ASCII")
             .map(Charset::forName)
             .collect(toList());
-
     private final TextPreprocessor textPreprocessor;
+    @Value("${dialogParser.pathToSubtitles}")
+    private String pathToSubtitles;
+    @Value("${subtitles.path}")
+    private String subtitlesPath;
 
     @Autowired
     public FileReader(TextPreprocessor textPreprocessor) {
@@ -60,5 +64,12 @@ public class FileReader {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    public Stream<String> subtitlesLines() {
+        return findAllFilesInDir(pathToSubtitles)
+                .map(this::readFile)
+                .filter(Optional::isPresent)
+                .flatMap(Optional::get);
     }
 }

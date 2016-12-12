@@ -1,4 +1,4 @@
-package pl.grzeslowski.chatbox.rnn;
+package pl.grzeslowski.chatbox.rnn.trainer;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
@@ -17,15 +17,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.String.format;
 
 class DialogsDataSetIterator implements DataSetIterator {
-    private final List<RnnEngineImpl.VecDialog> dialogs;
-    private Iterator<RnnEngineImpl.VecDialog> iterator;
-    private int cursor;
-
+    private final List<TrainerImpl.VecDialog> dialogs;
     private final int batchSize;
     private final int maxWordsInDialog;
     private final int layerSize;
+    private Iterator<TrainerImpl.VecDialog> iterator;
+    private int cursor;
 
-    DialogsDataSetIterator(List<RnnEngineImpl.VecDialog> dialogs, int batchSize, int maxWordsInDialog, int layerSize) {
+    DialogsDataSetIterator(List<TrainerImpl.VecDialog> dialogs, int batchSize, int maxWordsInDialog, int layerSize) {
         this.dialogs = dialogs;
         iterator = dialogs.iterator();
 
@@ -40,14 +39,14 @@ class DialogsDataSetIterator implements DataSetIterator {
             throw new NoSuchElementException();
         }
 
-        List<RnnEngineImpl.VecDialog> toProcess = new ArrayList<>(howMuchToTake);
+        List<TrainerImpl.VecDialog> toProcess = new ArrayList<>(howMuchToTake);
         for (int i = 0; i < howMuchToTake && iterator.hasNext(); i++) {
             toProcess.add(iterator.next());
             cursor++;
         }
 
         int maxLength = 0;
-        for (RnnEngineImpl.VecDialog dialog : toProcess) {
+        for (TrainerImpl.VecDialog dialog : toProcess) {
             maxLength = Math.max(maxLength, dialog.getQuestionSize());
             maxLength = Math.max(maxLength, dialog.getAnswerSize());
         }
@@ -61,7 +60,7 @@ class DialogsDataSetIterator implements DataSetIterator {
         INDArray labelsMask = Nd4j.zeros(toProcess.size(), maxLength);
 
         for (int i = 0; i < toProcess.size(); i++) {
-            final RnnEngineImpl.VecDialog dialog = toProcess.get(i);
+            final TrainerImpl.VecDialog dialog = toProcess.get(i);
 
             putIntoArray(features, featuresMask, i, dialog.getQuestion());
             putIntoArray(labels, labelsMask, i, dialog.getAnswer());
@@ -130,14 +129,14 @@ class DialogsDataSetIterator implements DataSetIterator {
     }
 
     @Override
-    public void setPreProcessor(DataSetPreProcessor preProcessor) {
-        throw new UnsupportedOperationException("setPreProcessor not suported");
-
+    public DataSetPreProcessor getPreProcessor() {
+        throw new UnsupportedOperationException("getPreProcessor not suported");
     }
 
     @Override
-    public DataSetPreProcessor getPreProcessor() {
-        throw new UnsupportedOperationException("getPreProcessor not suported");
+    public void setPreProcessor(DataSetPreProcessor preProcessor) {
+        throw new UnsupportedOperationException("setPreProcessor not suported");
+
     }
 
     @Override
