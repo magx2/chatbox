@@ -1,5 +1,7 @@
 package pl.grzeslowski.chatbox.files;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 public class FileReader {
+    private static final Logger log = LoggerFactory.getLogger(FileReader.class);
     private final List<Charset> charsets = Stream.of("UTF-8", "Windows-1250", "ISO-8859-1", "ISO-8859-2", "US-ASCII")
             .map(Charset::forName)
             .collect(toList());
@@ -45,6 +48,7 @@ public class FileReader {
     }
 
     public Optional<Stream<String>> readFile(Path path) {
+        log.info("Reading file {}.", path.toFile().getName());
         return charsets.stream()
                 .map(charset -> {
                     try {
@@ -67,6 +71,7 @@ public class FileReader {
     }
 
     public Stream<String> subtitlesLines() {
+        log.info("Crating stream of all files in dir {}.", pathToSubtitles);
         return findAllFilesInDir(pathToSubtitles)
                 .map(this::readFile)
                 .filter(Optional::isPresent)

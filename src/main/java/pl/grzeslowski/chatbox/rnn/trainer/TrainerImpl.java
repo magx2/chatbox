@@ -58,6 +58,7 @@ class TrainerImpl implements Trainer {
                 .filter(dialog -> dialog.getAnswerSize() <= maxWordsInDialog)
                 .collect(toList());
         final MultiLayerNetwork net = rnnEngine.buildEngine();
+        log.info("Initializing model");
         net.init();
         net.setListeners(new ScoreIterationListener(200));
 
@@ -67,6 +68,7 @@ class TrainerImpl implements Trainer {
         final DataSetIterator train = new DialogsDataSetIterator(list.subList(0, splitPoint), batchSize, maxWordsInDialog, layerSize);
         final DataSetIterator test = new DialogsDataSetIterator(list.subList(splitPoint, list.size()), batchSize, maxWordsInDialog, layerSize);
 
+        log.info("Starting learning");
         for (int i = 0; i < epochs; i++) {
             log.info("Epoch {}...", i);
             net.fit(train);

@@ -1,6 +1,8 @@
 package pl.grzeslowski.chatbox.dialogs;
 
 import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 class MicroDvdDialogLoader implements DialogLoader {
+    private static final Logger log = LoggerFactory.getLogger(MicroDvdDialogLoader.class);
     private static final Pattern LINE_PARSER_PATTERN = Pattern.compile(
             "[\\[{]" +
                     "(\\d+)" +
@@ -47,6 +50,7 @@ class MicroDvdDialogLoader implements DialogLoader {
 
     @Override
     public Stream<Dialog> load() {
+        log.info("Creating stream with all dialogs");
         return fileReader.subtitlesLines()
                 .map(this::parseDialogLine)
                 .filter(Optional::isPresent)

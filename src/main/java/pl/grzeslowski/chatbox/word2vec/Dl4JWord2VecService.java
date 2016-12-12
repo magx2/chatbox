@@ -57,12 +57,11 @@ class Dl4JWord2VecService implements Word2VecService {
     }
 
     private Word2Vec computeModelAndSave() throws IOException {
-        log.info("Load & vectorize Sentences...");
+        log.info("Computing word2vec");
         SentenceIterator iterator = new DirSentenceIterator(fileReader, pathToSubtitles);
         TokenizerFactory tokenizerFactory = new DefaultTokenizerFactory();
         tokenizerFactory.setTokenPreProcessor(new CommonPreprocessor());
 
-        log.info("Building model....");
         Word2Vec vec = new Word2Vec.Builder()
                 .minWordFrequency(minWordFrequency)
                 .iterations(iterations)
