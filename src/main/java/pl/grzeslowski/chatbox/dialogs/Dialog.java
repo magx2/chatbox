@@ -1,7 +1,6 @@
 package pl.grzeslowski.chatbox.dialogs;
 
 
-import java.util.Arrays;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
