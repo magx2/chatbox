@@ -2,19 +2,19 @@ seed: 1337
 dialogParser:
   maxGapBetweenDialogs: 3
   fps: 24
-  pathToSubtitles: 'data/subtitles'
+  pathToSubtitles: 'D:\Programowanie\deep_learning\chatbox\data/subtitles'
 word2vec:
-  pathToInputFile: 'data/joinedFile.txt'
+  pathToInputFile: 'D:\Programowanie\deep_learning\chatbox\data/joinedFile.txt'
   models:
-    pathToModel: 'data/models/word2vec.bin'
-    pathToWordVectors: 'data/models/wordVectors.txt'
+    pathToModel: 'D:\Programowanie\deep_learning\chatbox\data/models/word2vec.bin'
+    pathToWordVectors: 'D:\Programowanie\deep_learning\chatbox\data/models/wordVectors.txt'
   hyper:
     minWordFrequency: 5
     iterations: 1
     layerSize: 300
     windowsSize: 5
 subtitles:
-  path: 'data/subtitles'
+  path: 'D:\Programowanie\deep_learning\chatbox\data/subtitles'
 rnn:
   maxWordsInDialog: 30
   batchSize: 50
