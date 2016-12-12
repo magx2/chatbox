@@ -35,9 +35,9 @@ class MicroDvdDialogLoader implements DialogLoader {
                     "(.+)"
     );
     private final FileReader fileReader;
-    @Value("${dialogParser.maxGapBetweenDialogs}")
+    @Value("${dialogLoader.maxGapBetweenDialogs}")
     private int maxGapBetweenDialogs;
-    @Value("${dialogParser.fps}")
+    @Value("${dialogLoader.fps}")
     private int fps;
 
     @Autowired

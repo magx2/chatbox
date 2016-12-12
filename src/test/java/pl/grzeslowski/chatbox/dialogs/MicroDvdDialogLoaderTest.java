@@ -5,8 +5,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.grzeslowski.chatbox.TestApplicationConfiguration;
+import pl.grzeslowski.chatbox.files.FileReader;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,12 +16,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestApplicationConfiguration.class)
 public class MicroDvdDialogLoaderTest {
+    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     @Autowired
     private MicroDvdDialogLoader loader;
+
+    @SuppressWarnings("unused")
+    @MockBean
+    private FileReader fileReader;
 
     @Test
     public void shouldLoadBasicDialog() {
@@ -30,6 +38,7 @@ public class MicroDvdDialogLoaderTest {
                 "{12675}{12808}Znów nie żyjesz.",
                 "{12810}{13004}Te miny nie są niewypałami."
         );
+        given(fileReader.subtitlesLines()).willReturn(lines.stream());
 
         //when
         final Set<Dialog> dialogs = loader.load().collect(Collectors.toSet());
@@ -54,6 +63,7 @@ public class MicroDvdDialogLoaderTest {
                 "[12675][12808]Znów nie żyjesz.",
                 "[12810][13004]Te miny nie są niewypałami."
         );
+        given(fileReader.subtitlesLines()).willReturn(lines.stream());
 
         //when
         final Set<Dialog> dialogs = loader.load().collect(Collectors.toSet());
@@ -78,6 +88,7 @@ public class MicroDvdDialogLoaderTest {
                 "{12675}{12808}Znów nie żyjesz.",
                 "{13810}{13004}Te miny nie są niewypałami."
         );
+        given(fileReader.subtitlesLines()).willReturn(lines.stream());
 
         //when
         final Set<Dialog> dialogs = loader.load().collect(Collectors.toSet());
@@ -102,6 +113,7 @@ public class MicroDvdDialogLoaderTest {
                 "{13810}{13850}Te miny nie są niewypałami.",
                 "{13855}{13857}Jeśli zrobicie coś źle,"
         );
+        given(fileReader.subtitlesLines()).willReturn(lines.stream());
 
         //when
         final List<Dialog> dialogs = loader.load().collect(Collectors.toList());

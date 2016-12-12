@@ -24,7 +24,7 @@ public class FileReader {
             .map(Charset::forName)
             .collect(toList());
     private final TextPreprocessor textPreprocessor;
-    @Value("${dialogParser.pathToSubtitles}")
+    @Value("${dialogLoader.pathToSubtitles}")
     private String pathToSubtitles;
     @Value("${subtitles.path}")
     private String subtitlesPath;

@@ -2,9 +2,11 @@ package pl.grzeslowski.chatbox.misc;
 
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
+@Service
 public class RandomFactory implements FactoryBean<Random> {
 
     @Value("${seed}")

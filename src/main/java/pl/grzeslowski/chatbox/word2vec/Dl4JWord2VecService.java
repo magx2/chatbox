@@ -23,7 +23,7 @@ class Dl4JWord2VecService implements Word2VecService {
 
     @Value("${seed}")
     private int seed;
-    @Value("${dialogParser.pathToSubtitles}")
+    @Value("${dialogLoader.pathToSubtitles}")
     private String pathToSubtitles;
     @Value("${word2vec.models.pathToModel}")
     private String pathToModel;
