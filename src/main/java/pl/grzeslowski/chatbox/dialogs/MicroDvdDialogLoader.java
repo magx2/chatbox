@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.stream.Collector.Characteristics.IDENTITY_FINISH;
 import static java.util.stream.Collectors.toList;
 
@@ -33,14 +34,16 @@ class MicroDvdDialogLoader implements DialogLoader {
                     "[]}]" +
                     "(.+)"
     );
-
+    private final FileReader fileReader;
     @Value("${dialogParser.maxGapBetweenDialogs}")
     private int maxGapBetweenDialogs;
     @Value("${dialogParser.fps}")
     private int fps;
 
     @Autowired
-    private FileReader fileReader;
+    public MicroDvdDialogLoader(FileReader fileReader) {
+        this.fileReader = checkNotNull(fileReader);
+    }
 
     @Override
     public Stream<Dialog> load() {
