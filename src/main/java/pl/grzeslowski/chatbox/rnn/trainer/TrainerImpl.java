@@ -53,7 +53,7 @@ class TrainerImpl implements Trainer {
     }
 
     @Override
-    public MultiLayerNetwork train() {
+    public MultiLayerNetwork trainAndTest() {
         final Word2Vec word2Vec = word2VecService.computeModel();
         final List<VecDialog> list = dialogLoader.load()
                 .map(dialog -> dialogToVec(dialog, word2Vec))

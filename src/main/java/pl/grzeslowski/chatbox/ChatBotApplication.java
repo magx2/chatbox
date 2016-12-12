@@ -24,6 +24,6 @@ public class ChatBotApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws Exception {
-        trainer.train();
+        trainer.trainAndTest();
     }
 }
