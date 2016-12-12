@@ -17,12 +17,12 @@ import static org.fest.assertions.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestApplicationConfiguration.class)
-public class MicroDvdDialogParserTest {
+public class MicroDvdDialogLoaderTest {
     @Autowired
-    private MicroDvdDialogParser parser;
+    private MicroDvdDialogLoader loader;
 
     @Test
-    public void shouldParseBasicDialog() {
+    public void shouldLoadBasicDialog() {
 
         // given
         final List<String> lines = Arrays.asList(
@@ -32,7 +32,7 @@ public class MicroDvdDialogParserTest {
         );
 
         //when
-        final Set<Dialog> dialogs = parser.parse(lines).collect(Collectors.toSet());
+        final Set<Dialog> dialogs = loader.load().collect(Collectors.toSet());
 
         // then
         assertThat(dialogs).hasSize(1);
@@ -46,7 +46,7 @@ public class MicroDvdDialogParserTest {
     }
 
     @Test
-    public void shouldParseSquareBracketsDialog() {
+    public void shouldLoadSquareBracketsDialog() {
 
         // given
         final List<String> lines = Arrays.asList(
@@ -56,7 +56,7 @@ public class MicroDvdDialogParserTest {
         );
 
         //when
-        final Set<Dialog> dialogs = parser.parse(lines).collect(Collectors.toSet());
+        final Set<Dialog> dialogs = loader.load().collect(Collectors.toSet());
 
         // then
         assertThat(dialogs).hasSize(1);
@@ -80,7 +80,7 @@ public class MicroDvdDialogParserTest {
         );
 
         //when
-        final Set<Dialog> dialogs = parser.parse(lines).collect(Collectors.toSet());
+        final Set<Dialog> dialogs = loader.load().collect(Collectors.toSet());
 
         // then
         assertThat(dialogs).hasSize(1);
@@ -93,7 +93,7 @@ public class MicroDvdDialogParserTest {
     }
 
     @Test
-    public void shouldParse2Dialog() {
+    public void shouldLoad2Dialog() {
 
         // given
         final List<String> lines = Arrays.asList(
@@ -104,7 +104,7 @@ public class MicroDvdDialogParserTest {
         );
 
         //when
-        final List<Dialog> dialogs = parser.parse(lines).collect(Collectors.toList());
+        final List<Dialog> dialogs = loader.load().collect(Collectors.toList());
 
         // then
         assertThat(dialogs).hasSize(2);

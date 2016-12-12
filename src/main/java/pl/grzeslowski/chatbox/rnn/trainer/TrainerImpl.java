@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pl.grzeslowski.chatbox.dialogs.Dialog;
-import pl.grzeslowski.chatbox.dialogs.DialogParser;
+import pl.grzeslowski.chatbox.dialogs.DialogLoader;
 import pl.grzeslowski.chatbox.misc.RandomFactory;
 import pl.grzeslowski.chatbox.rnn.RnnEngine;
 import pl.grzeslowski.chatbox.word2vec.Word2VecService;
@@ -30,7 +30,7 @@ import static java.util.stream.Collectors.toList;
 class TrainerImpl implements Trainer {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(TrainerImpl.class);
 
-    private final DialogParser dialogParser;
+    private final DialogLoader dialogLoader;
     private final RandomFactory randomFactory;
     private final Word2VecService word2VecService;
     private final RnnEngine rnnEngine;
@@ -45,8 +45,8 @@ class TrainerImpl implements Trainer {
     private int layerSize;
 
     @Autowired
-    public TrainerImpl(DialogParser dialogParser, RandomFactory randomFactory, Word2VecService word2VecService, RnnEngine rnnEngine) {
-        this.dialogParser = checkNotNull(dialogParser);
+    public TrainerImpl(DialogLoader dialogLoader, RandomFactory randomFactory, Word2VecService word2VecService, RnnEngine rnnEngine) {
+        this.dialogLoader = checkNotNull(dialogLoader);
         this.randomFactory = checkNotNull(randomFactory);
         this.word2VecService = checkNotNull(word2VecService);
         this.rnnEngine = checkNotNull(rnnEngine);
@@ -55,7 +55,7 @@ class TrainerImpl implements Trainer {
     @Override
     public MultiLayerNetwork train() {
         final Word2Vec word2Vec = word2VecService.computeModel();
-        final List<VecDialog> list = dialogParser.load()
+        final List<VecDialog> list = dialogLoader.load()
                 .map(dialog -> dialogToVec(dialog, word2Vec))
                 .filter(dialog -> dialog.getQuestionSize() >= 1)
                 .filter(dialog -> dialog.getAnswerSize() >= 1)

@@ -23,7 +23,7 @@ import static java.util.stream.Collector.Characteristics.IDENTITY_FINISH;
 import static java.util.stream.Collectors.toList;
 
 @Service
-class MicroDvdDialogParser implements DialogParser {
+class MicroDvdDialogLoader implements DialogLoader {
     private static final Pattern LINE_PARSER_PATTERN = Pattern.compile(
             "[\\[{]" +
                     "(\\d+)" +
