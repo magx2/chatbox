@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.grzeslowski.chatbox.misc.RandomFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,8 +16,8 @@ class NineTenthSplitter implements TestSetSplitter {
     private Random random;
 
     @Autowired
-    public NineTenthSplitter(RandomFactory randomFactory) {
-        this.random = randomFactory.getObject();
+    public NineTenthSplitter(Random random) {
+        this.random = random;
     }
 
     @Override
