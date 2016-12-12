@@ -82,7 +82,7 @@ class MicroDvdDialogLoader implements DialogLoader {
             this.text = text;
         }
 
-        public String getText() {
+        String getText() {
             return text;
         }
     }
