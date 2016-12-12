@@ -14,7 +14,6 @@ import pl.grzeslowski.chatbox.dialogs.Dialog;
 import pl.grzeslowski.chatbox.dialogs.DialogLoader;
 import pl.grzeslowski.chatbox.dialogs.VecDialog;
 import pl.grzeslowski.chatbox.dialogs.VecDialogFunction;
-import pl.grzeslowski.chatbox.misc.RandomFactory;
 import pl.grzeslowski.chatbox.rnn.RnnEngine;
 import pl.grzeslowski.chatbox.rnn.trainer.splitters.TestSetSplitter;
 
@@ -27,7 +26,6 @@ class TrainerImpl implements Trainer {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(TrainerImpl.class);
 
     private final DialogLoader dialogLoader;
-    private final RandomFactory randomFactory;
     private final RnnEngine rnnEngine;
     private final VecDialogFunction vecDialogFunction;
 
@@ -41,9 +39,8 @@ class TrainerImpl implements Trainer {
     private int layerSize;
 
     @Autowired
-    public TrainerImpl(DialogLoader dialogLoader, RandomFactory randomFactory, RnnEngine rnnEngine, VecDialogFunction vecDialogFunction) {
+    public TrainerImpl(DialogLoader dialogLoader, RnnEngine rnnEngine, VecDialogFunction vecDialogFunction) {
         this.dialogLoader = checkNotNull(dialogLoader);
-        this.randomFactory = checkNotNull(randomFactory);
         this.rnnEngine = checkNotNull(rnnEngine);
         this.vecDialogFunction = checkNotNull(vecDialogFunction);
     }
