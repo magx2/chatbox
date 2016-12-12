@@ -4,7 +4,6 @@ dialogParser:
   fps: 24
   pathToSubtitles: 'D:\Programowanie\deep_learning\chatbox\data/subtitles'
 word2vec:
-  pathToInputFile: 'D:\Programowanie\deep_learning\chatbox\data/joinedFile.txt'
   models:
     pathToModel: 'D:\Programowanie\deep_learning\chatbox\data/models/word2vec.bin'
     pathToWordVectors: 'D:\Programowanie\deep_learning\chatbox\data/models/wordVectors.txt'

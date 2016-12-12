@@ -16,8 +16,6 @@ import pl.grzeslowski.chatbox.preprocessor.TextPreprocessor;
 import pl.grzeslowski.chatbox.rnn.RnnEngine;
 import pl.grzeslowski.chatbox.word2vec.Word2VecService;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -27,8 +25,6 @@ import java.util.stream.Stream;
 public class ChatBotApplication implements CommandLineRunner{
 	private static final Logger log = org.slf4j.LoggerFactory.getLogger(ChatBotApplication.class);
 
-	@Value("${word2vec.pathToInputFile}")
-	private String pathToInputFile;
 	@Value("${subtitles.path}")
 	private String subtitlesPath;
 	@Value("${dialogParser.pathToSubtitles}")
@@ -52,8 +48,6 @@ public class ChatBotApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws Exception {
-		prepareInputFileForWord2Vec();
-
 		final Word2Vec word2Vec = this.word2Vec.computeModel();
 		final Stream<String> lines = fileReader.findAllFilesInDir(pathToSubtitles)
 				.map(file -> fileReader.readFile(file))
@@ -61,13 +55,5 @@ public class ChatBotApplication implements CommandLineRunner{
 				.flatMap(Optional::get);
 		final Stream<Dialog> dialogs = dialogParser.parse(lines);
 		final MultiLayerNetwork multiLayerNetwork = rnnEngine.buildEngine(dialogs, word2Vec);
-	}
-
-	private void prepareInputFileForWord2Vec() {
-		final Path path = Paths.get(pathToInputFile);
-		if(!path.toFile().exists()) {
-			log.info("Creating input file for Word2Vec...");
-			fileReader.joinAllFilesInDirToSingleFile(subtitlesPath, pathToInputFile);
-		}
 	}
 }

@@ -2,14 +2,15 @@ package pl.grzeslowski.chatbox.word2vec;
 
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
 import org.deeplearning4j.models.word2vec.Word2Vec;
-import org.deeplearning4j.text.sentenceiterator.BasicLineIterator;
 import org.deeplearning4j.text.sentenceiterator.SentenceIterator;
 import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreprocessor;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import pl.grzeslowski.chatbox.files.FileReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,8 +23,8 @@ class Dl4JWord2VecService implements Word2VecService {
 
     @Value("${seed}")
     private int seed;
-    @Value("${word2vec.pathToInputFile}")
-    private String pathToInputFile;
+    @Value("${dialogParser.pathToSubtitles}")
+    private String pathToSubtitles;
     @Value("${word2vec.models.pathToModel}")
     private String pathToModel;
     @Value("${word2vec.models.pathToWordVectors}")
@@ -36,6 +37,9 @@ class Dl4JWord2VecService implements Word2VecService {
     private int layerSize;
     @Value("${word2vec.hyper.windowsSize}")
     private int windowsSize;
+
+    @Autowired
+    private FileReader fileReader;
 
     @Override
     public Word2Vec computeModel() {
@@ -54,7 +58,7 @@ class Dl4JWord2VecService implements Word2VecService {
 
     private Word2Vec computeModelAndSave() throws IOException {
         log.info("Load & vectorize Sentences...");
-        SentenceIterator iterator = new BasicLineIterator(pathToInputFile);
+        SentenceIterator iterator = new DirSentenceIterator(fileReader, pathToSubtitles);
         TokenizerFactory tokenizerFactory = new DefaultTokenizerFactory();
         tokenizerFactory.setTokenPreProcessor(new CommonPreprocessor());
 

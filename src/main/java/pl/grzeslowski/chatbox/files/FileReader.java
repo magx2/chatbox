@@ -61,19 +61,4 @@ public class FileReader {
             throw new UncheckedIOException(e);
         }
     }
-
-    public void joinAllFilesInDirToSingleFile(String dir, String newFile) {
-        final List<String> blob = findAllFilesInDir(dir)
-                .map(this::readFile)
-                .filter(Optional::isPresent)
-                .flatMap(Optional::get)
-                .map(line -> line.replaceAll("\\{", " "))
-                .map(line -> line.replaceAll("}", " "))
-                .collect(toList());
-        try {
-            Files.write(Paths.get(newFile), blob, Charset.forName("UTF-8"));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
 }
