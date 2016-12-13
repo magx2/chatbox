@@ -47,25 +47,27 @@ class DialogsDataSetIterator implements DataSetIterator {
             cursor++;
         }
 
-        int maxLength = 0;
+        int maxLengthQuestions = 0;
+        int maxLengthAnswers = 0;
         for (VecDialog dialog : toProcess) {
-            maxLength = Math.max(maxLength, dialog.getQuestionSize());
-            maxLength = Math.max(maxLength, dialog.getAnswerSize());
+            maxLengthQuestions = Math.max(maxLengthQuestions, dialog.getQuestionSize());
+            maxLengthAnswers = Math.max(maxLengthAnswers, dialog.getAnswerSize());
         }
 
-        checkArgument(maxLength <= maxWordsInDialog, format("maxLength = %s > maxWordsInDialog = %s", maxLength, maxWordsInDialog));
+        checkArgument(maxLengthQuestions <= maxWordsInDialog, format("maxLength = %s > maxWordsInDialog = %s", maxLengthQuestions, maxWordsInDialog));
+        checkArgument(maxLengthAnswers <= maxWordsInDialog, format("maxLength = %s > maxWordsInDialog = %s", maxLengthAnswers, maxWordsInDialog));
 
-        final INDArray features = Nd4j.zeros(toProcess.size(), layerSize, maxLength);
-        final INDArray labels = Nd4j.zeros(toProcess.size(), layerSize, maxLength);
+        final INDArray features = Nd4j.zeros(toProcess.size(), layerSize, maxLengthQuestions);
+        final INDArray labels = Nd4j.zeros(toProcess.size(), layerSize, maxLengthAnswers);
 
-        INDArray featuresMask = Nd4j.zeros(toProcess.size(), maxLength);
-        INDArray labelsMask = Nd4j.zeros(toProcess.size(), maxLength);
+        INDArray featuresMask = Nd4j.zeros(toProcess.size(), maxLengthQuestions);
+        INDArray labelsMask = Nd4j.zeros(toProcess.size(), maxLengthAnswers);
 
         for (int i = 0; i < toProcess.size(); i++) {
             final VecDialog dialog = toProcess.get(i);
 
             putIntoArrayQuestions(features, featuresMask, i, dialog);
-            putIntoArrayAnswers(labels, labelsMask, i, dialog, maxLength);
+            putIntoArrayAnswers(labels, labelsMask, i, dialog, maxLengthAnswers);
         }
 
         return new DataSet(features, labels, featuresMask, labelsMask);
