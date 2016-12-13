@@ -54,8 +54,8 @@ class DialogsDataSetIterator implements DataSetIterator {
             maxLengthAnswers = Math.max(maxLengthAnswers, dialog.getAnswerSize());
         }
 
-        checkArgument(maxLengthQuestions <= maxWordsInDialog, format("maxLength = %s > maxWordsInDialog = %s", maxLengthQuestions, maxWordsInDialog));
-        checkArgument(maxLengthAnswers <= maxWordsInDialog, format("maxLength = %s > maxWordsInDialog = %s", maxLengthAnswers, maxWordsInDialog));
+        checkArgument(maxLengthQuestions <= maxWordsInDialog, format("maxLengthQuestions = %s > maxWordsInDialog = %s", maxLengthQuestions, maxWordsInDialog));
+        checkArgument(maxLengthAnswers <= maxWordsInDialog, format("maxLengthAnswers = %s > maxWordsInDialog = %s", maxLengthAnswers, maxWordsInDialog));
 
         final INDArray features = Nd4j.zeros(toProcess.size(), layerSize, maxLengthQuestions, 'f');
         final INDArray labels = Nd4j.zeros(toProcess.size(), layerSize, maxLengthAnswers, 'f');
