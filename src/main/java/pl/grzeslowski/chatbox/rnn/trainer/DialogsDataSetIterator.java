@@ -93,8 +93,8 @@ class DialogsDataSetIterator implements DataSetIterator {
 
         List<INDArray> putFromHere = vecDialog.getAnswer();
         int offset = maxLengthAnswers - putFromHere.size();
-        for (int k = offset; k < putFromHere.size(); k++) {
-            INDArray vector = putFromHere.get(k);
+        for (int k = offset; k < putFromHere.size() + offset; k++) {
+            INDArray vector = putFromHere.get(k - offset);
             array.put(new INDArrayIndex[]{NDArrayIndex.point(idx), NDArrayIndex.all(), NDArrayIndex.point(k)}, vector);
 
             temp[1] = k;
