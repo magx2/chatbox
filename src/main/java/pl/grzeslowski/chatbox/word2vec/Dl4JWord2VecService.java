@@ -29,9 +29,9 @@ class Dl4JWord2VecService implements FactoryBean<Word2Vec> {
     @Value("${dialogLoader.pathToSubtitles}")
     private String pathToSubtitles;
     @Value("${word2vec.models.pathToModel}")
-    private String pathToModel;
+    private File pathToModel;
     @Value("${word2vec.models.pathToWordVectors}")
-    private String pathToWordVectors;
+    private File pathToWordVectors;
     @Value("${word2vec.hyper.minWordFrequency}")
     private int minWordFrequency;
     @Value("${word2vec.hyper.iterations}")
@@ -92,7 +92,7 @@ class Dl4JWord2VecService implements FactoryBean<Word2Vec> {
     private Optional<Word2Vec> loadModel() {
         log.info("Trying to load word2vec model...");
         try {
-            return Optional.of(WordVectorSerializer.readWord2VecModel(new File(pathToModel)));
+            return Optional.of(WordVectorSerializer.readWord2VecModel(pathToModel));
         } catch (Exception e) {
             return Optional.empty();
         }
