@@ -35,7 +35,8 @@ class RnnEngineImpl implements RnnEngine {
     public MultiLayerNetwork buildEngine() {
         log.info("Creating new RNN model...");
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT).iterations(1)
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+                .iterations(1)
                 .updater(Updater.RMSPROP)
                 .regularization(regularization)
                 .l2(l2)
