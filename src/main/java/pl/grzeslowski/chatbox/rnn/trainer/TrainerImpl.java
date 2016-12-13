@@ -81,7 +81,7 @@ class TrainerImpl implements Trainer {
 
             evaluation.evalTimeSeries(labels, predicted, outMask);
         }
-        log.info("Training output:\n{}", evaluation.stats());
+        log.info("Evaluation output:\n{}", evaluation.stats());
 
         return net;
     }
