@@ -73,7 +73,7 @@ class TrainerImpl implements Trainer {
         Evaluation evaluation = new Evaluation();
         while (test.hasNext()) {
             DataSet t = test.next();
-            INDArray features = t.getFeatureMatrix();
+            INDArray features = t.getFeatures();
             INDArray labels = t.getLabels();
             INDArray inMask = t.getFeaturesMaskArray();
             INDArray outMask = t.getLabelsMaskArray();
