@@ -64,18 +64,34 @@ class DialogsDataSetIterator implements DataSetIterator {
         for (int i = 0; i < toProcess.size(); i++) {
             final VecDialog dialog = toProcess.get(i);
 
-            putIntoArray(features, featuresMask, i, dialog.getQuestion());
-            putIntoArray(labels, labelsMask, i, dialog.getAnswer());
+            putIntoArrayQuestions(features, featuresMask, i, dialog);
+            putIntoArrayAnswers(labels, labelsMask, i, dialog, maxLength);
         }
 
         return new DataSet(features, labels, featuresMask, labelsMask);
     }
 
-    private void putIntoArray(INDArray array, INDArray mask, int idx, List<INDArray> putFromHere) {
+    private void putIntoArrayQuestions(INDArray array, INDArray mask, int idx, VecDialog vecDialog) {
         int[] temp = new int[2];
         temp[0] = idx;
 
+        List<INDArray> putFromHere = vecDialog.getQuestion();
         for (int k = 0; k < putFromHere.size(); k++) {
+            INDArray vector = putFromHere.get(k);
+            array.put(new INDArrayIndex[]{NDArrayIndex.point(idx), NDArrayIndex.all(), NDArrayIndex.point(k)}, vector);
+
+            temp[1] = k;
+            mask.putScalar(temp, 1.0);
+        }
+    }
+
+    private void putIntoArrayAnswers(INDArray array, INDArray mask, int idx, VecDialog vecDialog, int maxLengthAnswers) {
+        int[] temp = new int[2];
+        temp[0] = idx;
+
+        List<INDArray> putFromHere = vecDialog.getAnswer();
+        int offset = maxLengthAnswers - putFromHere.size();
+        for (int k = offset; k < putFromHere.size(); k++) {
             INDArray vector = putFromHere.get(k);
             array.put(new INDArrayIndex[]{NDArrayIndex.point(idx), NDArrayIndex.all(), NDArrayIndex.point(k)}, vector);
 
