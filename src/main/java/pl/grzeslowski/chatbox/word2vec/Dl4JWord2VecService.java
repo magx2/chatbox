@@ -7,6 +7,7 @@ import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreproc
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,10 +18,12 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Optional;
 
-@Service
-class Dl4JWord2VecService implements Word2VecService {
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(Dl4JWord2VecService.class);
+import static com.google.common.base.Preconditions.checkNotNull;
 
+@Service
+class Dl4JWord2VecService implements FactoryBean<Word2Vec> {
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(Dl4JWord2VecService.class);
+    private final FileReader fileReader;
     @Value("${seed}")
     private int seed;
     @Value("${dialogLoader.pathToSubtitles}")
@@ -39,10 +42,12 @@ class Dl4JWord2VecService implements Word2VecService {
     private int windowsSize;
 
     @Autowired
-    private FileReader fileReader;
+    public Dl4JWord2VecService(FileReader fileReader) {
+        this.fileReader = checkNotNull(fileReader);
+    }
 
     @Override
-    public Word2Vec computeModel() {
+    public Word2Vec getObject() throws Exception {
         final Optional<Word2Vec> word2Vec = loadModel();
         if(word2Vec.isPresent()) {
             log.info("Loaded saved word2vec model");
@@ -85,10 +90,21 @@ class Dl4JWord2VecService implements Word2VecService {
     }
 
     private Optional<Word2Vec> loadModel() {
+        log.info("Trying to load word2vec model...");
         try {
             return Optional.of(WordVectorSerializer.readWord2VecModel(new File(pathToModel)));
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return Word2Vec.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
     }
 }

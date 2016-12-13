@@ -4,7 +4,6 @@ import org.deeplearning4j.models.word2vec.Word2Vec;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.grzeslowski.chatbox.word2vec.Word2VecService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,17 +15,15 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 class VecDialogFunctionImpl implements VecDialogFunction {
-    private final Word2VecService word2VecService;
+    private final Word2Vec word2Vec;
 
     @Autowired
-    public VecDialogFunctionImpl(Word2VecService word2VecService) {
-        this.word2VecService = checkNotNull(word2VecService);
+    public VecDialogFunctionImpl(Word2Vec word2Vec) {
+        this.word2Vec = checkNotNull(word2Vec);
     }
 
     @Override
     public VecDialog apply(Dialog dialog) {
-        final Word2Vec word2Vec = word2VecService.computeModel(); // TODO don't like this. It look like this is computed with every invocation of apply method
-
         final String question = findQuestion(dialog);
         final String answer = findAnswer(dialog);
 
