@@ -57,11 +57,11 @@ class DialogsDataSetIterator implements DataSetIterator {
         checkArgument(maxLengthQuestions <= maxWordsInDialog, format("maxLength = %s > maxWordsInDialog = %s", maxLengthQuestions, maxWordsInDialog));
         checkArgument(maxLengthAnswers <= maxWordsInDialog, format("maxLength = %s > maxWordsInDialog = %s", maxLengthAnswers, maxWordsInDialog));
 
-        final INDArray features = Nd4j.zeros(toProcess.size(), layerSize, maxLengthQuestions);
-        final INDArray labels = Nd4j.zeros(toProcess.size(), layerSize, maxLengthAnswers);
+        final INDArray features = Nd4j.zeros(toProcess.size(), layerSize, maxLengthQuestions, 'f');
+        final INDArray labels = Nd4j.zeros(toProcess.size(), layerSize, maxLengthAnswers, 'f');
 
-        INDArray featuresMask = Nd4j.zeros(toProcess.size(), maxLengthQuestions);
-        INDArray labelsMask = Nd4j.zeros(toProcess.size(), maxLengthAnswers);
+        INDArray featuresMask = Nd4j.zeros(toProcess.size(), maxLengthQuestions, 'f');
+        INDArray labelsMask = Nd4j.zeros(toProcess.size(), maxLengthAnswers, 'f');
 
         for (int i = 0; i < toProcess.size(); i++) {
             final VecDialog dialog = toProcess.get(i);
