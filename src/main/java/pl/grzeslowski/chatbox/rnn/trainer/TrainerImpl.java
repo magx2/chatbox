@@ -1,8 +1,11 @@
 package pl.grzeslowski.chatbox.rnn.trainer;
 
+import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
-import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
+import org.deeplearning4j.ui.api.UIServer;
+import org.deeplearning4j.ui.stats.StatsListener;
+import org.deeplearning4j.ui.storage.FileStatsStorage;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.DataSet;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
@@ -17,6 +20,7 @@ import pl.grzeslowski.chatbox.dialogs.VecDialogFunction;
 import pl.grzeslowski.chatbox.rnn.RnnEngine;
 import pl.grzeslowski.chatbox.rnn.trainer.splitters.TestSetSplitter;
 
+import java.io.File;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -61,7 +65,26 @@ class TrainerImpl implements Trainer {
         final MultiLayerNetwork net = rnnEngine.buildEngine();
         log.info("Initializing model");
         net.init();
-        net.setListeners(new ScoreIterationListener(200));
+
+        // todo
+        //Initialize the user interface backend
+        UIServer uiServer = UIServer.getInstance();
+
+        //Configure where the network information (gradients, score vs. time etc) is to be stored. Here: store in memory.
+        final File file = new File("D:\\Programowanie\\deep_learning\\chatbox\\data\\ui_service.bin");
+        //noinspection ResultOfMethodCallIgnored
+        file.delete();
+        StatsStorage statsStorage = new FileStatsStorage(file);         //Alternative: new FileStatsStorage(File), for saving and loading later
+//        StatsStorage statsStorage = new InMemoryStatsStorage();          //Alternative: new FileStatsStorage(File), for saving and loading later
+
+        //Attach the StatsStorage instance to the UI: this allows the contents of the StatsStorage to be visualized
+        uiServer.attach(statsStorage);
+
+        //Then add the StatsListener to collect this information from the network, as it trains
+        net.setListeners(new StatsListener(statsStorage));
+        // todo
+
+//        net.setListeners(new ScoreIterationListener(200));
 
         final DataSetIterator train = createDateSetIterator(learningSets.getTrainingSet());
         final DataSetIterator test = createDateSetIterator(learningSets.getTestingSet());
