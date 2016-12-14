@@ -47,27 +47,25 @@ class DialogsDataSetIterator implements DataSetIterator {
             cursor++;
         }
 
-        int maxLengthQuestions = 0;
-        int maxLengthAnswers = 0;
+        int maxLength = 0;
         for (VecDialog dialog : toProcess) {
-            maxLengthQuestions = Math.max(maxLengthQuestions, dialog.getQuestionSize());
-            maxLengthAnswers = Math.max(maxLengthAnswers, dialog.getAnswerSize());
+            maxLength = Math.max(maxLength, dialog.getQuestionSize());
+            maxLength = Math.max(maxLength, dialog.getAnswerSize());
         }
 
-        checkArgument(maxLengthQuestions <= maxWordsInDialog, format("maxLengthQuestions = %s > maxWordsInDialog = %s", maxLengthQuestions, maxWordsInDialog));
-        checkArgument(maxLengthAnswers <= maxWordsInDialog, format("maxLengthAnswers = %s > maxWordsInDialog = %s", maxLengthAnswers, maxWordsInDialog));
+        checkArgument(maxLength <= maxWordsInDialog, format("maxLength = %s > maxWordsInDialog = %s", maxLength, maxWordsInDialog));
 
-        final INDArray features = Nd4j.zeros(toProcess.size(), layerSize, maxLengthQuestions, 'f');
-        final INDArray labels = Nd4j.zeros(toProcess.size(), layerSize, maxLengthAnswers, 'f');
+        final INDArray features = Nd4j.zeros(toProcess.size(), layerSize, maxLength);
+        final INDArray labels = Nd4j.zeros(toProcess.size(), layerSize, maxLength);
 
-        INDArray featuresMask = Nd4j.zeros(toProcess.size(), maxLengthQuestions, 'f');
-        INDArray labelsMask = Nd4j.zeros(toProcess.size(), maxLengthAnswers, 'f');
+        INDArray featuresMask = Nd4j.zeros(toProcess.size(), maxLength);
+        INDArray labelsMask = Nd4j.zeros(toProcess.size(), maxLength);
 
         for (int i = 0; i < toProcess.size(); i++) {
             final VecDialog dialog = toProcess.get(i);
 
             putIntoArrayQuestions(features, featuresMask, i, dialog);
-            putIntoArrayAnswers(labels, labelsMask, i, dialog, maxLengthAnswers);
+            putIntoArrayAnswers(labels, labelsMask, i, dialog, maxLength);
         }
 
         return new DataSet(features, labels, featuresMask, labelsMask);
@@ -109,12 +107,12 @@ class DialogsDataSetIterator implements DataSetIterator {
 
     @Override
     public int inputColumns() {
-        return maxWordsInDialog * layerSize;
+        return layerSize;
     }
 
     @Override
     public int totalOutcomes() {
-        return maxWordsInDialog * layerSize;
+        return layerSize;
     }
 
     @Override
