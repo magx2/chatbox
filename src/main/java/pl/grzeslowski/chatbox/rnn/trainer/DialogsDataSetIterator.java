@@ -19,7 +19,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.String.format;
 
 class DialogsDataSetIterator implements DataSetIterator {
-    private final Stream<VecDialog> dialogs;
     private final int batchSize;
     private final int maxWordsInDialog;
     private final int layerSize;
@@ -27,7 +26,6 @@ class DialogsDataSetIterator implements DataSetIterator {
     private int cursor;
 
     DialogsDataSetIterator(Stream<VecDialog> dialogs, int batchSize, int maxWordsInDialog, int layerSize) {
-        this.dialogs = dialogs;
         iterator = dialogs.iterator();
 
         this.batchSize = batchSize;
