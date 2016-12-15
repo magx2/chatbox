@@ -15,6 +15,7 @@ word2vec:
 subtitles:
   path: 'D:\Programowanie\deep_learning\chatbox\data/subtitles'
 rnn:
+  iterations: 1
   maxWordsInDialog: 30
   batchSize: 50
   epochs: 30

@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 class RnnEngineImpl implements RnnEngine {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(RnnEngineImpl.class);
 
+    @Value("${rnn.iterations}")
+    private int iterations;
     @Value("${rnn.layers.l0.nout}")
     private int layer0Out;
     @Value("${rnn.regularization}")
@@ -36,7 +38,7 @@ class RnnEngineImpl implements RnnEngine {
         log.info("Creating new RNN model...");
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .iterations(1)
+                .iterations(iterations)
                 .updater(Updater.RMSPROP)
 //                .regularization(regularization).l2(l2)
                 .weightInit(WeightInit.XAVIER)
