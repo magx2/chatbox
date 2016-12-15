@@ -8,11 +8,12 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Optional;
 
 import static java.lang.String.format;
 
 @Service
-class FileNeuralNetworkSaver implements NeuralNetworkSaver {
+class FileNeuralNetworkSaverLoader implements NeuralNetworkSaver, NeuralNetworkLoader {
     @Value("${rnn.pathToSaveModel}")
     private File pathToSaveModel;
 
@@ -22,6 +23,20 @@ class FileNeuralNetworkSaver implements NeuralNetworkSaver {
             ModelSerializer.writeModel(model, pathToSaveModel, true);
         } catch (IOException e) {
             throw new UncheckedIOException(format("Cannot save model to file %s.", pathToSaveModel.getAbsolutePath()), e);
+        }
+    }
+
+    @Override
+    public Optional<MultiLayerNetwork> load() {
+        if (pathToSaveModel.exists()) {
+            try {
+                final MultiLayerNetwork model = ModelSerializer.restoreMultiLayerNetwork(pathToSaveModel, true);
+                return Optional.of(model);
+            } catch (IOException e) {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
         }
     }
 }
