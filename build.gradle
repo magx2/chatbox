@@ -47,7 +47,6 @@ dependencies {
 	compile 'org.nd4j:nd4j-native:' + dl4jVersion + ":windows-x86_64"
 
 	compile 'org.deeplearning4j:deeplearning4j-ui_2.10:' + dl4jVersion
-	compile 'org.nd4j:nd4j-cuda-7.5:' + dl4jVersion
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile group: 'org.easytesting', name: 'fest-assert', version: '1.4'

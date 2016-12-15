@@ -1,6 +1,5 @@
 package pl.grzeslowski.chatbox;
 
-import org.nd4j.jita.conf.CudaEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -19,8 +18,6 @@ public class ChatBotApplication implements CommandLineRunner{
     }
 
 	public static void main(String[] args) {
-        // start CUDA
-        CudaEnvironment.getInstance().getConfiguration().allowMultiGPU(true);
         SpringApplication.run(ChatBotApplication.class, args);
 	}
 
