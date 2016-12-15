@@ -17,11 +17,15 @@ subtitles:
 rnn:
   maxWordsInDialog: 30
   batchSize: 50
-  epochs: 5
+  epochs: 30
   regularization: true
-  learningRate: 0.0018
+  learningRate: 0.1
   l2: 1e-5
   gradientNormalizationThreshold: 1.0
   layers:
     l0:
       nout: 200
+  pathToSaveModel: 'D:\Programowanie\deep_learning\chatbox\data/models/rnn-model.bin'
+iterationListeners:
+  fileStatsStorage: 'D:\Programowanie\deep_learning\chatbox\data\ui_service.bin'
+  printIterations: 200
