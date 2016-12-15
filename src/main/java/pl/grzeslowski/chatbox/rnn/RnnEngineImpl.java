@@ -40,7 +40,7 @@ class RnnEngineImpl implements RnnEngine {
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .iterations(iterations)
                 .updater(Updater.RMSPROP)
-//                .regularization(regularization).l2(l2)
+                .regularization(regularization).l2(l2)
                 .weightInit(WeightInit.XAVIER)
                 .gradientNormalization(GradientNormalization.ClipElementWiseAbsoluteValue)
                 .gradientNormalizationThreshold(gradientNormalizationThreshold)

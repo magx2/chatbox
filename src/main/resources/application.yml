@@ -19,7 +19,7 @@ rnn:
   maxWordsInDialog: 30
   batchSize: 50
   epochs: 30
-  regularization: true
+  regularization: false
   learningRate: 0.1
   l2: 1e-5
   gradientNormalizationThreshold: 1.0
