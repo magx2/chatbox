@@ -1,12 +1,12 @@
 package pl.grzeslowski.chatbox.rnn.trainer;
 
-import org.deeplearning4j.eval.Evaluation;
+import org.deeplearning4j.models.word2vec.Word2Vec;
+import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.deeplearning4j.ui.stats.StatsListener;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.dataset.api.DataSet;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
+import org.nd4j.linalg.dataset.api.iterator.MultiDataSetIterator;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +36,7 @@ class TrainerImpl implements Trainer {
     private final NeuralNetworkLoader neuralNetworkLoader;
     private final StatsListener statsListener;
     private final ScoreIterationListener scoreIterationListener;
+    private Word2Vec word2Vec;
 
     @Value("${rnn.maxWordsInDialog}")
     private int maxWordsInDialog;
@@ -49,7 +50,10 @@ class TrainerImpl implements Trainer {
     @Autowired
     public TrainerImpl(DialogLoader dialogLoader, RnnEngine rnnEngine, VecDialogFunction vecDialogFunction,
                        NeuralNetworkSaver neuralNetworkSaver, NeuralNetworkLoader neuralNetworkLoader,
-                       StatsListener statsListener, ScoreIterationListener scoreIterationListener) {
+                       StatsListener statsListener, ScoreIterationListener scoreIterationListener,
+
+
+                       Word2Vec word2Vec) {
         this.dialogLoader = checkNotNull(dialogLoader);
         this.rnnEngine = checkNotNull(rnnEngine);
         this.vecDialogFunction = checkNotNull(vecDialogFunction);
@@ -57,6 +61,7 @@ class TrainerImpl implements Trainer {
         this.neuralNetworkLoader = checkNotNull(neuralNetworkLoader);
         this.statsListener = checkNotNull(statsListener);
         this.scoreIterationListener = checkNotNull(scoreIterationListener);
+        this.word2Vec = word2Vec;
     }
 
     private DataSetIterator createDateSetIterator(Stream<Stream<Dialog>> stream) {
@@ -68,46 +73,54 @@ class TrainerImpl implements Trainer {
         return new DialogsDataSetIterator(vecDialogs, batchSize, maxWordsInDialog, layerSize);
     }
 
+    private MultiDataSetIterator createDateSetIterator2(Stream<Stream<Dialog>> stream) {
+        final Stream<Dialog> vecDialogs = stream.flatMap(s -> s);
+        return new DialogsMultipleDataSetIterator(vecDialogs, word2Vec, maxWordsInDialog, layerSize);
+    }
+
     @Override
     public MultiLayerNetwork trainAndTest() {
 
-        final MultiLayerNetwork net = loadModel();
+        final ComputationGraph net = loadModel();
         log.info("Initializing model");
         net.init();
         net.setListeners(statsListener, scoreIterationListener);
 
         for (int epoch = 0; epoch < epochs; epoch++) {
             final TestSetSplitter.LearningSets<Stream<Dialog>> learningSets = dialogLoader.loadTrainData();
-            final DataSetIterator train = createDateSetIterator(learningSets.getTrainingSet());
-            final DataSetIterator test = createDateSetIterator(learningSets.getTestingSet());
+            final MultiDataSetIterator train = createDateSetIterator2(learningSets.getTrainingSet());
+            final MultiDataSetIterator test = createDateSetIterator2(learningSets.getTestingSet());
+//            final DataSetIterator train = createDateSetIterator(learningSets.getTrainingSet());
+//            final DataSetIterator test = createDateSetIterator(learningSets.getTestingSet());
 
             log.info("Starting learning, epoch {}", epoch);
             net.fit(train);
+            log.info("end {}", epoch);
 
-            log.info("Saving model");
-            neuralNetworkSaver.save(net);
+//            log.info("Saving model");
+//            neuralNetworkSaver.save(net);
 
-            log.info("Starting evaluation:");
+//            log.info("Starting evaluation:");
 
-            Evaluation evaluation = new Evaluation();
-            while (test.hasNext()) {
-                DataSet t = test.next();
-                INDArray features = t.getFeatures();
-                INDArray labels = t.getLabels();
-                INDArray inMask = t.getFeaturesMaskArray();
-                INDArray outMask = t.getLabelsMaskArray();
-                INDArray predicted = net.output(features, false, inMask, outMask);
-
-                evaluation.evalTimeSeries(labels, predicted, outMask);
-            }
-            log.info("Evaluation output:\n{}", evaluation.stats(true));
+//            Evaluation evaluation = new Evaluation();
+//            while (test.hasNext()) {
+//                DataSet t = test.next();
+//                INDArray features = t.getFeatures();
+//                INDArray labels = t.getLabels();
+//                INDArray inMask = t.getFeaturesMaskArray();
+//                INDArray outMask = t.getLabelsMaskArray();
+//                INDArray predicted = net.output(features, false, inMask, outMask);
+//
+//                evaluation.evalTimeSeries(labels, predicted, outMask);
+//            }
+//            log.info("Evaluation output:\n{}", evaluation.stats(true));
         }
 
-        return net;
+        return null;
     }
 
-    private MultiLayerNetwork loadModel() {
-        final Optional<MultiLayerNetwork> model = neuralNetworkLoader.load();
+    private ComputationGraph loadModel() {
+        final Optional<ComputationGraph> model = neuralNetworkLoader.load();
         if (model.isPresent()) {
             return model.get();
         } else {

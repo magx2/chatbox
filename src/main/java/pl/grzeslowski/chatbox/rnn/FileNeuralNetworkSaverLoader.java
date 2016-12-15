@@ -1,5 +1,6 @@
 package pl.grzeslowski.chatbox.rnn;
 
+import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.util.ModelSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,10 +28,11 @@ class FileNeuralNetworkSaverLoader implements NeuralNetworkSaver, NeuralNetworkL
     }
 
     @Override
-    public Optional<MultiLayerNetwork> load() {
+    public Optional<ComputationGraph> load() {
         if (pathToSaveModel.exists()) {
             try {
-                final MultiLayerNetwork model = ModelSerializer.restoreMultiLayerNetwork(pathToSaveModel, true);
+//                final MultiLayerNetwork model = ModelSerializer.restoreMultiLayerNetwork(pathToSaveModel, true);
+                final ComputationGraph model = ModelSerializer.restoreComputationGraph(pathToSaveModel, true);
                 return Optional.of(model);
             } catch (IOException e) {
                 return Optional.empty();

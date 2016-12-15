@@ -1,13 +1,15 @@
 package pl.grzeslowski.chatbox.rnn;
 
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
-import org.deeplearning4j.nn.conf.GradientNormalization;
-import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
+import org.deeplearning4j.nn.conf.ComputationGraphConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.Updater;
+import org.deeplearning4j.nn.conf.graph.rnn.DuplicateToTimeSeriesVertex;
+import org.deeplearning4j.nn.conf.graph.rnn.LastTimeStepVertex;
+import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.GravesLSTM;
 import org.deeplearning4j.nn.conf.layers.RnnOutputLayer;
-import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.slf4j.Logger;
@@ -34,34 +36,41 @@ class RnnEngineImpl implements RnnEngine {
     private int layerSize;
 
     @Override
-    public MultiLayerNetwork buildEngine() {
+    public ComputationGraph buildEngine() {
         log.info("Creating new RNN model...");
-        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .iterations(iterations)
-                .updater(Updater.RMSPROP)
-                .regularization(regularization).l2(l2)
+        ComputationGraphConfiguration configuration = new NeuralNetConfiguration.Builder()
+                //.regularization(true).l2(0.000005)
                 .weightInit(WeightInit.XAVIER)
-                .gradientNormalization(GradientNormalization.ClipElementWiseAbsoluteValue)
-                .gradientNormalizationThreshold(gradientNormalizationThreshold)
-                .learningRate(learningRate)
-                .list()
-                .layer(0, new GravesLSTM.Builder()
-                        .nIn(layerSize)
-                        .nOut(200)
-                        .activation("softsign").build())
-                .layer(1, new GravesLSTM.Builder()
-                        .nIn(200)
-                        .nOut(100)
-                        .activation("softsign").build())
-                .layer(2, new RnnOutputLayer.Builder()
-                        .activation("softmax")
-                        .lossFunction(LossFunctions.LossFunction.MCXENT)
-                        .nIn(100)
-                        .nOut(layerSize)
-                        .build())
-                .pretrain(false).backprop(true).build();
+                .learningRate(0.5)
+                .updater(Updater.RMSPROP)
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT).iterations(1)
+                .seed(1337)
+                .graphBuilder()
+                .addInputs("additionIn", "sumOut")
+                .setInputTypes(InputType.recurrent(layerSize), InputType.recurrent(layerSize))
 
-        return new MultiLayerNetwork(conf);
+                .addLayer("encoder",
+                        new GravesLSTM.Builder().nIn(layerSize).nOut(200).activation("softsign").build(),
+                        "additionIn")
+                .addVertex("lastTimeStep",
+                        new LastTimeStepVertex("additionIn"),
+                        "encoder")
+                .addVertex("duplicateTimeStep",
+                        new DuplicateToTimeSeriesVertex("sumOut"),
+                        "lastTimeStep")
+
+                .addLayer("decoder",
+                        new GravesLSTM.Builder().nIn(layerSize + 200).nOut(128).activation("softsign").build(),
+                        "sumOut", "duplicateTimeStep")
+
+                .addLayer("output",
+                        new RnnOutputLayer.Builder().nIn(128).nOut(layerSize).activation("softmax").lossFunction(LossFunctions.LossFunction.MCXENT).build(),
+                        "decoder")
+
+                .setOutputs("output")
+                .pretrain(false).backprop(true)
+                .build();
+
+        return new ComputationGraph(configuration);
     }
 }
