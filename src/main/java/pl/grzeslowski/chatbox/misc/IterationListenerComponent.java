@@ -1,4 +1,4 @@
-package pl.grzeslowski.chatbox.iteration_listeners;
+package pl.grzeslowski.chatbox.misc;
 
 import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
